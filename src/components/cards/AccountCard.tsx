@@ -1,22 +1,26 @@
 import { motion, useMotionValue, useTransform } from "framer-motion";
-import logo from "../../assets/logo.svg"
+import { useState } from "react";
+import logo from "../../assets/logo.svg";
 import { getGradient, getLogo } from "../../lib/utils";
-
+import { ClipboardIcon, EyeIcon, EyeOffIcon, Check } from "lucide-react";
 
 type Props = {
     id: number;
     name: string;
     balance: number;
     type?: string;
-    last4?: string;
+    accountNumber?: string;
 };
 
-export default function AccountCard({ id, name, balance, last4 = "4242" }: Props) {
+export default function AccountCard({ id, name, balance, accountNumber = "4242 51212 242121" }: Props) {
     const x = useMotionValue(0);
     const y = useMotionValue(0);
 
-    const rotateX = useTransform(y, [0, 200], [5, -5]); // Reduced rotation range
+    const rotateX = useTransform(y, [0, 200], [5, -5]);
     const rotateY = useTransform(x, [0, 320], [-5, 5]);
+
+    const [isHidden, setIsHidden] = useState(false);
+    const [copied, setCopied] = useState(false);
 
     function handleMouse(event: React.MouseEvent<HTMLDivElement>) {
         const rect = event.currentTarget.getBoundingClientRect();
@@ -28,6 +32,21 @@ export default function AccountCard({ id, name, balance, last4 = "4242" }: Props
         x.set(160);
         y.set(100);
     }
+
+    function toggleVisibility() {
+        setIsHidden((prev) => !prev);
+    }
+
+    function copyAccountNumber() {
+        if (accountNumber) {
+            navigator.clipboard.writeText(accountNumber);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
+    }
+
+    const displayBalance = isHidden ? "*****" : `$${balance.toLocaleString()}`;
+    const displayAccount = isHidden ? "**** **** **** ****" : accountNumber;
 
     const background = getGradient(id) || "linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))";
 
@@ -43,11 +62,11 @@ export default function AccountCard({ id, name, balance, last4 = "4242" }: Props
                     rotateY,
                     transformStyle: "preserve-3d",
                     background,
-                    transformOrigin: "center center"
+                    transformOrigin: "center center",
                 }}
                 className="w-full aspect-[1.586/1] rounded-[1.5rem] p-6 text-white relative shadow-2xl border border-white/10 flex flex-col justify-between group"
             >
-                {/* 3D Content Layers - Subtle depth */}
+                {/* 3D Content Layers */}
                 <div style={{ transform: "translateZ(20px)" }} className="absolute inset-0 pointer-events-none rounded-[1.5rem]" />
 
                 {/* Top Row */}
@@ -64,23 +83,38 @@ export default function AccountCard({ id, name, balance, last4 = "4242" }: Props
                 </div>
 
                 {/* Bottom Section */}
-                <div style={{ transform: "translateZ(35px)" }} className="relative z-10 mt-auto pointer-events-none">
-                    <div className="mb-4">
-                        <span className="text-3xl font-bold tracking-tight">
-                            ${balance.toLocaleString()}
-                        </span>
+                <div style={{ transform: "translateZ(35px)" }} className="relative z-10 mt-auto pointer-events-auto">
+                    <div className="mb-4 flex items-center gap-2">
+                        <span className="text-3xl font-bold tracking-tight">{displayBalance}</span>
+                        <button onClick={toggleVisibility} className="w-6 h-6 opacity-70 hover:opacity-100 transition cursor-pointer">
+                            {isHidden ? <EyeOffIcon /> : <EyeIcon />}
+                        </button>
                     </div>
 
                     <div className="flex justify-between items-end opacity-80">
                         <div className="flex flex-col gap-1">
                             <span className="text-[10px] uppercase tracking-wider">Account number</span>
-                            <span className="font-mono tracking-widest text-sm">**** **** **** {last4}</span>
+                            <div className="flex items-center gap-2">
+                                <span className="font-mono tracking-widest text-sm">{displayAccount}</span>
+                                <button
+                                    onClick={copyAccountNumber}
+                                    className="w-5 h-5 opacity-70 hover:opacity-100 transition cursor-pointer relative"
+                                    title="Copy to clipboard"
+                                >
+                                    {copied ? <Check className="text-green-400" size={18} /> : <ClipboardIcon size={18} />}
+
+                                    {/* Tooltip Notification */}
+                                    {copied && (
+                                        <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-[10px] bg-black/80 px-2 py-1 rounded text-white whitespace-nowrap">
+                                            Copied!
+                                        </span>
+                                    )}
+                                </button>
+                            </div>
                         </div>
                         <img src={getLogo(id)} alt="logo" className="w-8 h-8 opacity-70 " />
                     </div>
-
                 </div>
-
 
                 {/* Glossy Reflection */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none rounded-[1.5rem] mix-blend-overlay" />

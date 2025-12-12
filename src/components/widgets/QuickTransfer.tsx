@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 const people = [
     { rank: 1, name: "Anna", amount: "$12k", img: "https://i.pravatar.cc/150?u=a042581f4e29026024d", color: "ring-yellow-400" },
@@ -10,7 +12,9 @@ export default function TopPeople() {
         <div className="glass-panel p-6 flex flex-col">
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-semibold text-white/90">Top People</h3>
-                <button className="text-xs text-blue-400 hover:text-blue-300">View All</button>
+                <Link to="/people" className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors">
+                    View All <ArrowRight size={12} />
+                </Link>
             </div>
 
             <div className="flex justify-center items-end gap-4 h-32 mb-4">

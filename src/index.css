@@ -3,18 +3,13 @@
 @import "tailwindcss";
 
 @theme {
-  /* Colors */
-  --color-background: #000000;
-  --color-foreground: #ffffff;
+  /* Colors - referencing CSS variables for mode switching */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
 
-  --color-card: rgba(255, 255, 255, 0.08);
-  /* More transparent for glass */
-  --color-card-border: rgba(255, 255, 255, 0.12);
-  --color-card-border-highlight: rgba(255, 255, 255, 0.25);
-
-  --color-accent: #2d68ff;
-  --color-success: #2ecc71;
-  --color-danger: #e74c3c;
+  --color-card: var(--card);
+  --color-card-border: var(--card-border);
+  --color-card-border-highlight: var(--card-border-highlight);
 
   /* Radii */
   --radius-xl: 1.5rem;
@@ -24,28 +19,61 @@
   --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-  --shadow-glow: 0 0 20px rgba(45, 104, 255, 0.4);
+  --shadow-glass: var(--shadow-glass);
+  --shadow-glow: var(--shadow-glow);
 }
 
-/* Base Styles */
+/* Base Variables - Light Mode Default */
+:root {
+  --background: #f2f4f8;
+  --foreground: #0f172a;
+
+  --card: rgba(255, 255, 255, 0.6);
+  --card-border: rgba(255, 255, 255, 0.4);
+  --card-border-highlight: rgba(255, 255, 255, 0.8);
+
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+  --shadow-glow: 0 0 20px rgba(45, 104, 255, 0.2);
+
+  /* Light mode detailed background */
+  --bg-image:
+    radial-gradient(circle at 10% 20%, rgba(219, 234, 254, 0.8) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(224, 231, 255, 0.8) 0%, transparent 40%),
+    #f2f4f8;
+}
+
+/* Dark Mode Overrides */
+.dark {
+  --background: #000000;
+  --foreground: #ffffff;
+
+  --card: rgba(255, 255, 255, 0.08);
+  --card-border: rgba(255, 255, 255, 0.12);
+  --card-border-highlight: rgba(255, 255, 255, 0.25);
+
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(45, 104, 255, 0.4);
+
+  /* Dark mode detailed background */
+  --bg-image:
+    radial-gradient(circle at 15% 15%, rgba(45, 104, 255, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 85% 20%, rgba(200, 50, 255, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%),
+    #050505;
+}
+
+/* Global Reset */
 body {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
+  background: var(--bg-image);
+  background-color: var(--background);
+  /* Fallback */
+  color: var(--foreground);
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   margin: 0;
   padding: 0;
   min-height: 100vh;
   overflow-x: hidden;
-
-  /* Mesh Gradient Background */
-  background:
-    radial-gradient(circle at 15% 15%, rgba(45, 104, 255, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 85% 20%, rgba(200, 50, 255, 0.12) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%),
-    /* Vinoette */
-    #050505;
-  /* Fallback base */
+  transition: color 0.3s ease, background-color 0.3s ease;
 }
 
 /* Glassmorphism Utilities */
@@ -55,20 +83,22 @@ body {
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--color-card-border);
   border-top: 1px solid var(--color-card-border-highlight);
-  /* Top highlight simulating light */
   box-shadow: var(--shadow-glass);
   border-radius: var(--radius-xl);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .glass-button {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(var(--foreground), 0.05);
+  /* Adaptive button bg */
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--color-card-border);
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .glass-button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(var(--foreground), 0.1);
   transform: translateY(-1px);
 }
 
@@ -101,10 +131,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(150, 150, 150, 0.3);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(150, 150, 150, 0.5);
 }

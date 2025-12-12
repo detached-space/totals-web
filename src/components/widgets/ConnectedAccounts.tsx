@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import awash from "../../assets/awash.svg";
 import telebirr from "../../assets/telebirr.svg";
 import boa from "../../assets/boa.svg";
@@ -22,9 +23,9 @@ export default function ConnectedAccounts() {
                     <h3 className="text-lg font-semibold text-white/90">Connected Accounts</h3>
                     <span className="text-3xl font-bold text-white mt-2 block">5</span>
                 </div>
-                <button className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                <Link to="/accounts" className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors">
                     View All <ArrowRight size={12} />
-                </button>
+                </Link>
             </div>
 
             <div className="flex items-center -space-x-2 overflow-hidden py-2">

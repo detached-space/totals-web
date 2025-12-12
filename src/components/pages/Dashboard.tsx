@@ -6,15 +6,15 @@ import SpendingStats from "../widgets/SpendingStats";
 import ConnectedAccounts from "../widgets/ConnectedAccounts";
 const accounts = [
     {
-        "id": 1, "name": "Comercial bank of ethiopia", "balance": 24500.80, "last4": "8821"
+        "id": 1, "name": "Comercial bank of ethiopia", "balance": 24500.80, "accountNumber": "8821 2514 12412 21"
     },
-    { "id": 2, "name": "Awash", "balance": 24500.80, "last4": "8821" },
-    { "id": 3, "name": "Bank of Abysinna", "balance": 12400.00, "last4": "3321" },
+    { "id": 2, "name": "Awash", "balance": 24500.80, "accountNumber": "8821" },
+    { "id": 3, "name": "Bank of Abysinna", "balance": 12400.00, "accountNumber": "3321" },
     {
-        "id": 4, "name": "Dashen", "balance": 24500.80, "last4": "8821"
+        "id": 4, "name": "Dashen", "balance": 24500.80, "accountNumber": "8821"
     },
     {
-        "id": 6, "name": "Telebirr", "balance": 24500.80, "last4": "8821"
+        "id": 6, "name": "Telebirr", "balance": 24500.80, "accountNumber": "8821"
     },
 ]
 export default function Dashboard() {
@@ -33,7 +33,7 @@ export default function Dashboard() {
                                 id={account.id}
                                 name={account.name}
                                 balance={account.balance}
-                                last4={account.last4}
+                                accountNumber={account.accountNumber}
                             />
                         ))}
 
