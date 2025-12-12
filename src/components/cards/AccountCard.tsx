@@ -1,16 +1,17 @@
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import logo from "../../assets/logo.svg"
+import { getGradient, getLogo } from "../../lib/utils";
 
 
 type Props = {
+    id: number;
     name: string;
     balance: number;
-    bg?: string;
     type?: string;
     last4?: string;
 };
 
-export default function AccountCard({ name, balance, bg, last4 = "4242" }: Props) {
+export default function AccountCard({ id, name, balance, last4 = "4242" }: Props) {
     const x = useMotionValue(0);
     const y = useMotionValue(0);
 
@@ -28,7 +29,7 @@ export default function AccountCard({ name, balance, bg, last4 = "4242" }: Props
         y.set(100);
     }
 
-    const background = bg || "linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))";
+    const background = getGradient(id) || "linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))";
 
     return (
         <div style={{ perspective: 1200 }} className="w-full h-full">
@@ -75,9 +76,11 @@ export default function AccountCard({ name, balance, bg, last4 = "4242" }: Props
                             <span className="text-[10px] uppercase tracking-wider">Account number</span>
                             <span className="font-mono tracking-widest text-sm">**** **** **** {last4}</span>
                         </div>
-
+                        <img src={getLogo(id)} alt="logo" className="w-8 h-8 opacity-70 " />
                     </div>
+
                 </div>
+
 
                 {/* Glossy Reflection */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none rounded-[1.5rem] mix-blend-overlay" />

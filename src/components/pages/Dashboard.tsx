@@ -4,7 +4,6 @@ import TransactionsTable from "../tables/TransactionsTable";
 import TopPeople from "../widgets/QuickTransfer";
 import SpendingStats from "../widgets/SpendingStats";
 import ConnectedAccounts from "../widgets/ConnectedAccounts";
-import { getGradient } from "../../lib/utils";
 const accounts = [
     {
         "id": 1, "name": "Comercial bank of ethiopia", "balance": 24500.80, "last4": "8821"
@@ -31,9 +30,9 @@ export default function Dashboard() {
                         {accounts.map((account, i) => (
                             <AccountCard
                                 key={i}
+                                id={account.id}
                                 name={account.name}
                                 balance={account.balance}
-                                bg={getGradient(account.id)}
                                 last4={account.last4}
                             />
                         ))}
