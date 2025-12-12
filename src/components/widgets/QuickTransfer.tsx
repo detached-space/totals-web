@@ -1,4 +1,3 @@
-import { ArrowRight } from "lucide-react";
 
 const people = [
     { rank: 1, name: "Anna", amount: "$12k", img: "https://i.pravatar.cc/150?u=a042581f4e29026024d", color: "ring-yellow-400" },
