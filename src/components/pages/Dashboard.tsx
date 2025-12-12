@@ -53,7 +53,7 @@ export default function Dashboard() {
 
                 {/* Right Column (Sidebar Widgets) */}
                 <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
-                    <TotalsCard />
+                    <TotalsCard accounts={accounts} />
                     <TopPeople />
                     <div className="h-[350px]">
                         <SpendingStats />

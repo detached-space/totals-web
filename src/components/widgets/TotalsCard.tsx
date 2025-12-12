@@ -1,14 +1,9 @@
 import { ArrowRight, Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
-import awash from "../../assets/awash.svg";
-import telebirr from "../../assets/telebirr.svg";
-import boa from "../../assets/boa.svg";
-import cbe from "../../assets/cbe.svg";
-import dashen from "../../assets/dashen.svg";
+import { getLogo } from "../../lib/utils";
 
-const accounts = [awash, telebirr, boa, cbe, dashen];
 
-export default function TotalsCard() {
+export default function TotalsCard({ accounts }: { accounts: any[] }) {
     return (
         <div className="glass-panel p-8 relative overflow-hidden group">
             {/* Background Gradient Blob */}
@@ -26,22 +21,22 @@ export default function TotalsCard() {
 
                 <div>
                     <span className="text-sm font-medium text-[var(--color-foreground)] opacity-60 uppercase tracking-wider">Total Balance</span>
-                    <h2 className="text-4xl font-bold text-[var(--color-foreground)] mt-1 tracking-tight">$84,350.50</h2>
+                    <h2 className="text-4xl font-bold text-[var(--color-foreground)] mt-1 tracking-tight">{accounts.reduce((total, account) => total + account.balance, 0)}</h2>
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t border-[var(--color-card-border)]">
                     <span className="text-sm font-medium text-[var(--color-foreground)] opacity-70">
-                        <strong className="text-[var(--color-foreground)]">5</strong> Connected Accounts
+                        <strong className="text-[var(--color-foreground)]">{accounts.length}</strong> Connected Accounts
                     </span>
 
                     <div className="flex items-center -space-x-3">
-                        {accounts.slice(0, 4).map((src, i) => (
+                        {accounts.slice(0, 4).map((account, i) => (
                             <div key={i} className="w-8 h-8 rounded-full border-2 border-[var(--color-card)] bg-white flex items-center justify-center overflow-hidden shadow-sm">
-                                <img src={src} className="w-5 h-5 object-contain" />
+                                <img src={getLogo(account.id)} className="w-5 h-5 object-contain" />
                             </div>
                         ))}
                         {accounts.length > 4 && (
-                            <div className="w-8 h-8 rounded-full border-2 border-[var(--color-card)] bg-[var(--color-foreground)] flex items-center justify-center text-[var(--color-card)] text-[10px] font-bold shadow-sm">
+                            <div className="w-8 h-8 rounded-full border-2 border-[var(--color-card)] bg-[var(--color-foreground)] flex items-center justify-center text-[var(--color-background)] text-[10px] font-bold shadow-sm">
                                 +{accounts.length - 4}
                             </div>
                         )}
