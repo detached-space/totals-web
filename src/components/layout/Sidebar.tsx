@@ -23,7 +23,7 @@ export default function Sidebar() {
     return (
         <motion.aside
             animate={{ width: collapsed ? "80px" : "280px" }}
-            className="h-screen border-r border-white/10 flex flex-col bg-black/40 backdrop-blur-xl relative z-50 pointer-events-auto"
+            className="h-screen border-r border-[var(--color-card-border)] flex flex-col bg-[var(--color-card)] backdrop-blur-xl relative z-50 pointer-events-auto transition-colors duration-300"
         >
             <div className="p-6 flex items-center justify-between">
                 <AnimatePresence>
@@ -32,7 +32,7 @@ export default function Sidebar() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="text-2xl font-bold tracking-tight text-white"
+                            className="text-2xl font-bold tracking-tight text-[var(--color-foreground)]"
                         >
                             totals.
                         </motion.h1>
@@ -40,7 +40,7 @@ export default function Sidebar() {
                 </AnimatePresence>
                 <button
                     onClick={() => setCollapsed(!collapsed)}
-                    className="p-2 rounded-lg text-white/50 hover:bg-white/5 hover:text-white transition-colors cursor-pointer"
+                    className="p-2 rounded-lg text-[var(--color-foreground)] opacity-50 hover:bg-[var(--color-foreground)]/5 hover:opacity-100 transition-all cursor-pointer"
                 >
                     {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
                 </button>
@@ -53,9 +53,9 @@ export default function Sidebar() {
                         <Link
                             key={n.label}
                             to={n.path}
-                            className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all group ${active ? 'bg-blue-600/20 text-blue-400' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}
+                            className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all group ${active ? 'bg-blue-600/20 text-blue-400' : 'text-[var(--color-foreground)] opacity-60 hover:bg-[var(--color-foreground)]/5 hover:opacity-100 hover:text-[var(--color-foreground)]'}`}
                         >
-                            <n.icon size={20} className={active ? "text-blue-400" : "group-hover:text-white transition-colors"} />
+                            <n.icon size={20} className={active ? "text-blue-400" : "group-hover:text-[var(--color-foreground)] transition-colors"} />
                             {!collapsed && (
                                 <motion.span
                                     initial={{ opacity: 0, x: -10 }}
@@ -69,8 +69,6 @@ export default function Sidebar() {
                     );
                 })}
             </nav>
-
-
-        </motion.aside >
+        </motion.aside>
     );
 }

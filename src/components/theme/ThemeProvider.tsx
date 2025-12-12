@@ -12,7 +12,7 @@ interface ThemeProviderProps {
 }
 
 export default function ThemeProvider({ children }: ThemeProviderProps) {
-    const [theme, setTheme] = useState<'light' | 'dark'>('light');
+    const [theme, setTheme] = useState<'light' | 'dark'>('dark');
 
     useEffect(() => {
         const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
@@ -21,10 +21,13 @@ export default function ThemeProvider({ children }: ThemeProviderProps) {
 
     useEffect(() => {
         localStorage.setItem('theme', theme);
-        if (theme === 'dark') {
-            document.documentElement.classList.add('dark');
+        const root = document.documentElement;
+        if (theme === 'light') {
+            root.classList.add('light');
+            root.classList.remove('dark');
         } else {
-            document.documentElement.classList.remove('dark');
+            root.classList.add('dark');
+            root.classList.remove('light');
         }
     }, [theme]);
 

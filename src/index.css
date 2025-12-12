@@ -23,27 +23,8 @@
   --shadow-glow: var(--shadow-glow);
 }
 
-/* Base Variables - Light Mode Default */
+/* Base Variables - Dark Mode Default */
 :root {
-  --background: #f2f4f8;
-  --foreground: #0f172a;
-
-  --card: rgba(255, 255, 255, 0.6);
-  --card-border: rgba(255, 255, 255, 0.4);
-  --card-border-highlight: rgba(255, 255, 255, 0.8);
-
-  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-  --shadow-glow: 0 0 20px rgba(45, 104, 255, 0.2);
-
-  /* Light mode detailed background */
-  --bg-image:
-    radial-gradient(circle at 10% 20%, rgba(219, 234, 254, 0.8) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(224, 231, 255, 0.8) 0%, transparent 40%),
-    #f2f4f8;
-}
-
-/* Dark Mode Overrides */
-.dark {
   --background: #000000;
   --foreground: #ffffff;
 
@@ -60,6 +41,25 @@
     radial-gradient(circle at 85% 20%, rgba(200, 50, 255, 0.12) 0%, transparent 40%),
     radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%),
     #050505;
+}
+
+/* Light Mode Overrides */
+.light {
+  --background: #f2f4f8;
+  --foreground: #0f172a;
+
+  --card: rgba(255, 255, 255, 0.6);
+  --card-border: rgba(255, 255, 255, 0.4);
+  --card-border-highlight: rgba(255, 255, 255, 0.8);
+
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+  --shadow-glow: 0 0 20px rgba(45, 104, 255, 0.2);
+
+  /* Light mode detailed background */
+  --bg-image:
+    radial-gradient(circle at 10% 20%, rgba(219, 234, 254, 0.8) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(224, 231, 255, 0.8) 0%, transparent 40%),
+    #f2f4f8;
 }
 
 /* Global Reset */

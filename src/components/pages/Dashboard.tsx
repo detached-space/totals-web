@@ -3,7 +3,8 @@ import NetWorthChart from "../charts/NetWorthChart";
 import TransactionsTable from "../tables/TransactionsTable";
 import TopPeople from "../widgets/QuickTransfer";
 import SpendingStats from "../widgets/SpendingStats";
-import ConnectedAccounts from "../widgets/ConnectedAccounts";
+import TotalsCard from "../widgets/TotalsCard";
+
 const accounts = [
     {
         "id": 1, "name": "Comercial bank of ethiopia", "balance": 24500.80, "accountNumber": "8821 2514 12412 21"
@@ -19,7 +20,7 @@ const accounts = [
 ]
 export default function Dashboard() {
     return (
-        <div className="min-h-screen px-8 pb-8 text-white max-w-[1600px] mx-auto">
+        <div className="min-h-screen px-8 pb-8 text-[var(--color-foreground)] max-w-[1600px] mx-auto">
             {/* Content Grid */}
             <div className="grid grid-cols-12 gap-8">
 
@@ -52,7 +53,7 @@ export default function Dashboard() {
 
                 {/* Right Column (Sidebar Widgets) */}
                 <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
-                    <ConnectedAccounts />
+                    <TotalsCard />
                     <TopPeople />
                     <div className="h-[350px]">
                         <SpendingStats />

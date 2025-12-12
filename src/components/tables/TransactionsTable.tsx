@@ -1,4 +1,5 @@
-import { ShoppingBag, DollarSign, Coffee, Music } from "lucide-react";
+import { ShoppingBag, DollarSign, Coffee, Music, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const transactions = [
     { id: 1, name: "Spotify Premium", amount: -9.99, date: "Today, 10:23 AM", icon: Music, color: "bg-green-500/20 text-green-400" },
@@ -12,7 +13,10 @@ export default function TransactionsTable() {
     return (
         <div className="glass-panel p-6 h-full overflow-hidden flex flex-col">
             <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-semibold text-white/90">Transactions</h3>
+                <h3 className="text-xl font-semibold text-[var(--color-foreground)]">Transactions</h3>
+                <Link to="/transactions" className="text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1">
+                    View All <ArrowRight size={14} />
+                </Link>
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
