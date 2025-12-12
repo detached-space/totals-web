@@ -9,9 +9,9 @@ import dashen from "../assets/dashen.svg";
 const gradientColors: Record<number, [string, string]> = {
     1: ['#1b0b2e', '#3a0f5c'], // Dark Purple
     2: ['#d97706', '#1a3a5c'], // Orange dominant with Blue accent
-    3: ['#d9b90b', '#5c4b0b'], // Dark Yellow
-    4: ['#1a2d5c', '#01050cff'], // Dark Blue
-    6: ['#0a7b44', '#215c39ff']
+    3: ['#d9b90b', '#382e0cff'], // Dark Yellow
+    4: ['#1a2d5c', '#344e7bff'], // Dark Blue
+    6: ['#0a7b44', '#202522ff']
 };
 
 const defaultColors: [string, string] = ['#1b0b2e', '#3a0f5c']; // default Dark Purple
