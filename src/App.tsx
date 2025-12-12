@@ -1,7 +1,7 @@
 import Sidebar from "./components/layout/Sidebar";
 import Topbar from "./components/layout/Topbar";
-import Dashboard from "./pages/Dashboard";
-import ThemeProvider from "./theme/ThemeProvider";
+import Dashboard from "./components/pages/Dashboard";
+import ThemeProvider from "./components/theme/ThemeProvider";
 
 export default function App() {
   return (
