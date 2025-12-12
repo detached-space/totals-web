@@ -1,10 +1,17 @@
 import { ArrowRight } from "lucide-react";
+import awash from "../../assets/awash.svg";
+import telebirr from "../../assets/telebirr.svg";
+import boa from "../../assets/boa.svg";
+import cbe from "../../assets/cbe.svg";
+import dashen from "../../assets/dashen.svg";
+
 
 const accounts = [
-    "https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg", // MC
-    "https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg", // Visa
-    "https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg", // PayPal
-    "https://upload.wikimedia.org/wikipedia/commons/f/ff/Stripe_Logo%2C_revised_2016.svg", // Stripe
+    awash,
+    telebirr,
+    boa,
+    cbe,
+    dashen,
 ];
 
 export default function ConnectedAccounts() {
@@ -12,8 +19,8 @@ export default function ConnectedAccounts() {
         <div className="glass-panel p-6 flex flex-col justify-between">
             <div className="flex justify-between items-start mb-4">
                 <div>
-                    <h3 className="text-lg font-semibold text-white/90">Connections</h3>
-                    <span className="text-3xl font-bold text-white mt-2 block">4</span>
+                    <h3 className="text-lg font-semibold text-white/90">Connected Accounts</h3>
+                    <span className="text-3xl font-bold text-white mt-2 block">5</span>
                 </div>
                 <button className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
                     View All <ArrowRight size={12} />

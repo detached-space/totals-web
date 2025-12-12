@@ -60,10 +60,6 @@ export default function TopPeople() {
                     <div className="w-12 h-12 bg-white/5 rounded-t-lg border-t border-x border-white/10" />
                 </div>
             </div>
-
-            <button className="w-full mt-auto glass-button py-2 rounded-xl text-xs font-medium flex items-center justify-center gap-2">
-                Send Money <ArrowRight size={14} />
-            </button>
         </div>
     );
 }
