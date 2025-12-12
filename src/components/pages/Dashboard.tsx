@@ -4,7 +4,20 @@ import TransactionsTable from "../tables/TransactionsTable";
 import TopPeople from "../widgets/QuickTransfer";
 import SpendingStats from "../widgets/SpendingStats";
 import ConnectedAccounts from "../widgets/ConnectedAccounts";
-
+import { getGradient } from "../../lib/utils";
+const accounts = [
+    {
+        "id": 1, "name": "Comercial bank of ethiopia", "balance": 24500.80, "last4": "8821"
+    },
+    { "id": 2, "name": "Awash", "balance": 24500.80, "last4": "8821" },
+    { "id": 3, "name": "Bank of Abysinna", "balance": 12400.00, "last4": "3321" },
+    {
+        "id": 4, "name": "Dashen", "balance": 24500.80, "last4": "8821"
+    },
+    {
+        "id": 6, "name": "Telebirr", "balance": 24500.80, "last4": "8821"
+    },
+]
 export default function Dashboard() {
     return (
         <div className="min-h-screen px-8 pb-8 text-white max-w-[1600px] mx-auto">
@@ -15,22 +28,16 @@ export default function Dashboard() {
                 <div className="col-span-12 lg:col-span-8 flex flex-col gap-8">
                     {/* Cards Scroll/Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <AccountCard
-                            name="Main Account"
-                            balance={24500.80}
-                            bg="linear-gradient(135deg, #1e1e1e, #2d2d2d)"
-                            type="visa"
-                            last4="8821"
-                        />
-                        <div className="hidden md:block">
+                        {accounts.map((account, i) => (
                             <AccountCard
-                                name="Savings Vault"
-                                balance={12400.00}
-                                bg="linear-gradient(135deg, #0f172a, #334155)"
-                                type="mastercard"
-                                last4="3321"
+                                key={i}
+                                name={account.name}
+                                balance={account.balance}
+                                bg={getGradient(account.id)}
+                                last4={account.last4}
                             />
-                        </div>
+                        ))}
+
                     </div>
 
                     {/* Chart Section */}

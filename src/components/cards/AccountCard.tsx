@@ -1,15 +1,16 @@
 import { motion, useMotionValue, useTransform } from "framer-motion";
-import { Wifi } from "lucide-react";
+import logo from "../../assets/logo.svg"
+
 
 type Props = {
     name: string;
     balance: number;
     bg?: string;
-    type?: "visa" | "mastercard";
+    type?: string;
     last4?: string;
 };
 
-export default function AccountCard({ name, balance, bg, type = "visa", last4 = "4242" }: Props) {
+export default function AccountCard({ name, balance, bg, last4 = "4242" }: Props) {
     const x = useMotionValue(0);
     const y = useMotionValue(0);
 
@@ -51,7 +52,7 @@ export default function AccountCard({ name, balance, bg, type = "visa", last4 = 
                 {/* Top Row */}
                 <div style={{ transform: "translateZ(30px)" }} className="flex justify-between items-start relative z-10 pointer-events-none">
                     <span className="font-semibold tracking-wide opacity-90 text-shadow-sm">{name}</span>
-                    <Wifi className="w-8 h-8 opacity-70 rotate-90" />
+                    <img src={logo} alt="logo" className="w-8 h-8 opacity-70 " />
                 </div>
 
                 {/* Chip */}
@@ -71,12 +72,10 @@ export default function AccountCard({ name, balance, bg, type = "visa", last4 = 
 
                     <div className="flex justify-between items-end opacity-80">
                         <div className="flex flex-col gap-1">
-                            <span className="text-[10px] uppercase tracking-wider">Card Holder</span>
+                            <span className="text-[10px] uppercase tracking-wider">Account number</span>
                             <span className="font-mono tracking-widest text-sm">**** **** **** {last4}</span>
                         </div>
-                        <div className="font-bold italic text-xl">
-                            {type === 'visa' ? 'VISA' : 'Mastercard'}
-                        </div>
+
                     </div>
                 </div>
 
