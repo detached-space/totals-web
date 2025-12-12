@@ -13,7 +13,6 @@ export default function TransactionsTable() {
         <div className="glass-panel p-6 h-full overflow-hidden flex flex-col">
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-semibold text-white/90">Transactions</h3>
-                <button className="text-sm text-blue-400 hover:text-blue-300 transition-colors">View All</button>
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">

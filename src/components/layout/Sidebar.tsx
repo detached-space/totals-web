@@ -1,4 +1,4 @@
-import { Home, Wallet, CreditCard, Users, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
+import { Home, Wallet, CreditCard, Users, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -58,12 +58,7 @@ export default function Sidebar() {
                 ))}
             </nav>
 
-            <div className="p-4 border-t border-white/10">
-                <button className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-red-400/80 hover:bg-red-500/10 hover:text-red-400 transition-all ${collapsed ? 'justify-center' : ''}`}>
-                    <LogOut size={20} />
-                    {!collapsed && <span>Logout</span>}
-                </button>
-            </div>
+
         </motion.aside>
     );
 }

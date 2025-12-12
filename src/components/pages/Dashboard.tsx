@@ -1,9 +1,9 @@
 import AccountCard from "../cards/AccountCard";
 import NetWorthChart from "../charts/NetWorthChart";
 import TransactionsTable from "../tables/TransactionsTable";
-import QuickTransfer from "../widgets/QuickTransfer";
+import TopPeople from "../widgets/QuickTransfer";
 import SpendingStats from "../widgets/SpendingStats";
-
+import ConnectedAccounts from "../widgets/ConnectedAccounts";
 
 export default function Dashboard() {
     return (
@@ -11,7 +11,7 @@ export default function Dashboard() {
             {/* Content Grid */}
             <div className="grid grid-cols-12 gap-8">
 
-                {/* Left Column (Cards + Chart) */}
+                {/* Left Column (Cards + Chart + Transactions Table) */}
                 <div className="col-span-12 lg:col-span-8 flex flex-col gap-8">
                     {/* Cards Scroll/Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -31,7 +31,6 @@ export default function Dashboard() {
                                 last4="3321"
                             />
                         </div>
-                        {/* Mobile only stack or add carousel later */}
                     </div>
 
                     {/* Chart Section */}
@@ -39,19 +38,18 @@ export default function Dashboard() {
                         <NetWorthChart />
                     </div>
 
-                    {/* Secondary Cards (e.g. Loans or smaller accounts) could go here */}
+                    {/* Transactions Area */}
+                    <div className="flex-1 min-h-[400px]">
+                        <TransactionsTable />
+                    </div>
                 </div>
 
                 {/* Right Column (Sidebar Widgets) */}
                 <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
-                    <QuickTransfer />
-
-                    <div className="h-[300px]">
+                    <ConnectedAccounts />
+                    <TopPeople />
+                    <div className="h-[350px]">
                         <SpendingStats />
-                    </div>
-
-                    <div className="flex-1 min-h-[400px]">
-                        <TransactionsTable />
                     </div>
                 </div>
             </div>
