@@ -1,119 +1,110 @@
-/* index.css — Tailwind v4 Dashboard */
+/* index.css — Premium Glassmorphism Theme */
 
 @import "tailwindcss";
 
-/* ===== Theme Tokens ===== */
 @theme {
-  /* Background & text colors */
-  --color-bg: #ffffff;
-  --color-bg-dark: #0f0f0f;
-  --color-text: #111111;
-  --color-text-dark: #f5f5f5;
+  /* Colors */
+  --color-background: #000000;
+  --color-foreground: #ffffff;
 
-  /* Glassmorphism for cards */
-  --color-card-glass: rgba(255, 255, 255, 0.10);
-  --color-card-border: rgba(255, 255, 255, 0.25);
+  --color-card: rgba(255, 255, 255, 0.08);
+  /* More transparent for glass */
+  --color-card-border: rgba(255, 255, 255, 0.12);
+  --color-card-border-highlight: rgba(255, 255, 255, 0.25);
+
+  --color-accent: #2d68ff;
+  --color-success: #2ecc71;
+  --color-danger: #e74c3c;
+
+  /* Radii */
+  --radius-xl: 1.5rem;
+  /* For cards */
+  --radius-2xl: 2rem;
+  /* For specialized shapes */
+  --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.15);
-  --shadow-soft-dark: 0 8px 30px rgba(0, 0, 0, 0.35);
-
-  /* Border radius */
-  --radius-card: 1.75rem;
-  --radius-ui: 1rem;
-
-  /* Fonts */
-  --font-display: 'Inter', sans-serif;
-  --font-body: 'Inter', sans-serif;
-
-  /* Gradients */
-  --gradient-blue: linear-gradient(135deg, #696cff, #4f46e5);
-  --gradient-green: linear-gradient(135deg, #10b981, #059669);
-  --gradient-orange: linear-gradient(135deg, #f2994a, #d97706);
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 20px rgba(45, 104, 255, 0.4);
 }
 
-/* ===== Dark Mode ===== */
-html.dark {
-  --color-bg: var(--color-bg-dark);
-  --color-text: var(--color-text-dark);
-  --shadow-soft: var(--shadow-soft-dark);
-}
-
-/* ===== Global styles ===== */
+/* Base Styles */
 body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-body);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   margin: 0;
   padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+
+  /* Mesh Gradient Background */
+  background:
+    radial-gradient(circle at 15% 15%, rgba(45, 104, 255, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 85% 20%, rgba(200, 50, 255, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%),
+    /* Vinoette */
+    #050505;
+  /* Fallback base */
 }
 
-/* Scrollbar for better UX */
-body::-webkit-scrollbar {
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: var(--color-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-card-border);
+  border-top: 1px solid var(--color-card-border-highlight);
+  /* Top highlight simulating light */
+  box-shadow: var(--shadow-glass);
+  border-radius: var(--radius-xl);
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Animations */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
   width: 8px;
 }
 
-body::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: transparent;
 }
 
-body::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
 }
 
-/* Links */
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-/* Utility classes for glassmorphic cards */
-.card {
-  background: var(--color-card-glass);
-  border: 1px solid var(--color-card-border);
-  border-radius: var(--radius-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: var(--shadow-soft);
-}
-
-/* Rounded UI components */
-.rounded-ui {
-  border-radius: var(--radius-ui);
-}
-
-/* Buttons */
-.button {
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-ui);
-  background-color: rgba(0, 0, 0, 0.05);
-  transition: all 0.2s;
-}
-
-.button:hover {
-  opacity: 0.7;
-}
-
-/* Typography */
-.text-lg {
-  font-size: 1.125rem;
-}
-
-.text-xl {
-  font-size: 1.25rem;
-}
-
-.text-3xl {
-  font-size: 1.875rem;
-}
-
-.font-display {
-  font-family: var(--font-display);
-}
-
-/* Blur effect utility */
-.backdrop-blur-xl {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
 }

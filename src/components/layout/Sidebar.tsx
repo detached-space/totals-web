@@ -1,27 +1,69 @@
-import { Home, Wallet2, PieChart, Settings } from "lucide-react";
+import { Home, Wallet, CreditCard, Users, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Sidebar() {
+    const [collapsed, setCollapsed] = useState(false);
+
     const nav = [
-        { icon: <Home size={20} />, label: "Dashboard" },
-        { icon: <Wallet2 size={20} />, label: "Accounts" },
-        { icon: <PieChart size={20} />, label: "Analytics" },
-        { icon: <Settings size={20} />, label: "Settings" },
+        { icon: Home, label: "Dashboard" },
+        { icon: Wallet, label: "Accounts" },
+        { icon: CreditCard, label: "Transactions" },
+        { icon: Users, label: "People" },
     ];
 
     return (
-        <aside className="w-64 h-screen border-r p-6 flex flex-col gap-6 bg-[var(--color-bg)] text-[var(--color-text)]">
-            <h1 className="text-2xl font-semibold tracking-tight">totals.</h1>
-            <nav className="flex flex-col gap-3">
+        <motion.aside
+            animate={{ width: collapsed ? "80px" : "280px" }}
+            className="h-screen border-r border-white/10 flex flex-col bg-black/40 backdrop-blur-xl relative z-50 pointer-events-auto"
+        >
+            <div className="p-6 flex items-center justify-between">
+                <AnimatePresence>
+                    {!collapsed && (
+                        <motion.h1
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="text-2xl font-bold tracking-tight text-white"
+                        >
+                            totals.
+                        </motion.h1>
+                    )}
+                </AnimatePresence>
+                <button
+                    onClick={() => setCollapsed(!collapsed)}
+                    className="p-2 rounded-lg text-white/50 hover:bg-white/5 hover:text-white transition-colors"
+                >
+                    {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+                </button>
+            </div>
+
+            <nav className="flex-1 px-4 flex flex-col gap-2 mt-4">
                 {nav.map((n) => (
                     <button
                         key={n.label}
-                        className="flex items-center gap-3 px-3 py-2 rounded-[var(--radius-ui)] hover:bg-black/5 dark:hover:bg-white/10 transition"
+                        className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all group ${n.label === 'Dashboard' ? 'bg-blue-600/20 text-blue-400' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}
                     >
-                        {n.icon}
-                        <span>{n.label}</span>
+                        <n.icon size={20} className={n.label === 'Dashboard' ? "text-blue-400" : "group-hover:text-white transition-colors"} />
+                        {!collapsed && (
+                            <motion.span
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="font-medium"
+                            >
+                                {n.label}
+                            </motion.span>
+                        )}
                     </button>
                 ))}
             </nav>
-        </aside>
+
+            <div className="p-4 border-t border-white/10">
+                <button className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-red-400/80 hover:bg-red-500/10 hover:text-red-400 transition-all ${collapsed ? 'justify-center' : ''}`}>
+                    <LogOut size={20} />
+                    {!collapsed && <span>Logout</span>}
+                </button>
+            </div>
+        </motion.aside>
     );
 }
