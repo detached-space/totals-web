@@ -1,12 +1,64 @@
-import { ShoppingBag, DollarSign, Coffee, Music, ArrowRight } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, ArrowRight, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
+import type { Transaction } from "../../lib/types";
 
-const transactions = [
-    { id: 1, name: "Spotify Premium", amount: -9.99, date: "Today, 10:23 AM", icon: Music, color: "bg-green-500/20 text-green-400" },
-    { id: 2, name: "Design Salary", amount: 3500.00, date: "Yesterday, 5:00 PM", icon: DollarSign, color: "bg-blue-500/20 text-blue-400" },
-    { id: 3, name: "Whole Foods", amount: -85.20, date: "Nov 2, 8:45 PM", icon: ShoppingBag, color: "bg-orange-500/20 text-orange-400" },
-    { id: 4, name: "Starbucks", amount: -6.50, date: "Nov 1, 9:15 AM", icon: Coffee, color: "bg-yellow-500/20 text-yellow-400" },
-    { id: 5, name: "Apple Store", amount: -1299.00, date: "Oct 28, 2:30 PM", icon: ShoppingBag, color: "bg-gray-500/20 text-gray-400" },
+// Mock Data matching the new interface
+const transactions: Transaction[] = [
+    {
+        amount: -9.99,
+        reference: "Spotify Premium",
+        creditor: "Spotify Ltd",
+        time: "2023-10-24T10:23:00Z",
+        status: "CLEARED",
+        type: "DEBIT",
+        transactionLink: "https://spotify.com",
+        accountNumber: "8821",
+        bankId: 2
+    },
+    {
+        amount: -12.50,
+        reference: "Uber Ride",
+        creditor: "Uber Technologies",
+        time: "2023-10-23T18:45:00Z",
+        status: "PENDING",
+        type: "DEBIT",
+        transactionLink: "https://uber.com",
+        accountNumber: "3321",
+        bankId: 3
+    },
+    {
+        amount: 2500.00,
+        reference: "Salary Deposit",
+        creditor: "Tech Corp Inc.",
+        time: "2023-10-23T09:00:00Z",
+        status: "CLEARED",
+        type: "CREDIT",
+        transactionLink: "https://bank.com",
+        accountNumber: "8821",
+        bankId: 2
+    },
+    {
+        amount: -4.50,
+        reference: "Starbucks Coffee",
+        creditor: "Starbucks",
+        time: "2023-10-22T08:30:00Z",
+        status: "CLEARED",
+        type: "DEBIT",
+        transactionLink: "https://starbucks.com",
+        accountNumber: "8821",
+        bankId: 2
+    },
+    {
+        amount: -120.00,
+        reference: "Grocery Shopping",
+        creditor: "Whole Foods",
+        time: "2023-10-21T16:20:00Z",
+        status: "SYNCED",
+        type: "DEBIT",
+        transactionLink: "https://wholefoods.com",
+        accountNumber: "8821",
+        bankId: 2
+    },
 ];
 
 export default function TransactionsTable() {
@@ -20,20 +72,35 @@ export default function TransactionsTable() {
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-                {transactions.map((t) => (
-                    <div key={t.id} className="flex items-center justify-between group cursor-pointer p-2 rounded-xl hover:bg-white/5 transition-colors">
+                {transactions.map((t, i) => (
+                    <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-[var(--color-foreground)]/5 transition-colors group cursor-pointer border border-transparent hover:border-[var(--color-card-border)]">
                         <div className="flex items-center gap-4">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${t.color}`}>
-                                <t.icon size={18} />
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${t.type === 'CREDIT' ? 'bg-green-500/20 text-green-400' : 'bg-[var(--color-foreground)]/10 text-[var(--color-foreground)]'}`}>
+                                {t.type === 'CREDIT' ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
                             </div>
                             <div>
-                                <p className="font-medium text-white/90 text-sm group-hover:text-white transition-colors">{t.name}</p>
-                                <p className="text-xs text-white/50">{t.date}</p>
+                                <h4 className="font-medium text-[var(--color-foreground)] line-clamp-1">{t.creditor || t.reference}</h4>
+                                <p className="text-xs text-[var(--color-foreground)] opacity-50">
+                                    {new Date(t.time || "").toLocaleDateString()} • {t.status}
+                                </p>
                             </div>
                         </div>
-                        <span className={`font-semibold text-sm ${t.amount > 0 ? 'text-green-400' : 'text-white/80'}`}>
-                            {t.amount > 0 ? '+' : ''}${Math.abs(t.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                        </span>
+
+                        <div className="flex items-center gap-4">
+                            <span className={`font-semibold ${t.type === 'CREDIT' ? 'text-green-400' : 'text-[var(--color-foreground)]'}`}>
+                                {t.amount > 0 ? '+' : ''}{t.amount.toLocaleString()}
+                            </span>
+                            {t.transactionLink && (
+                                <a
+                                    href={t.transactionLink}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity text-[var(--color-foreground)] hover:text-blue-400"
+                                >
+                                    <ExternalLink size={14} />
+                                </a>
+                            )}
+                        </div>
                     </div>
                 ))}
             </div>

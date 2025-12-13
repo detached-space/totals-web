@@ -4,6 +4,7 @@ import TransactionsTable from "../tables/TransactionsTable";
 import TopPeople from "../widgets/QuickTransfer";
 import SpendingStats from "../widgets/SpendingStats";
 import TotalsCard from "../widgets/TotalsCard";
+import { useState } from "react";
 
 const accounts = [
     {
@@ -19,6 +20,8 @@ const accounts = [
     },
 ]
 export default function Dashboard() {
+    const [timeframe, setTimeframe] = useState("This Month");
+
     return (
         <div className="min-h-screen px-8 pb-8 text-[var(--color-foreground)] max-w-[1600px] mx-auto">
             {/* Content Grid */}
@@ -40,9 +43,25 @@ export default function Dashboard() {
 
                     </div>
 
-                    {/* Chart Section */}
-                    <div className="h-[400px]">
-                        <NetWorthChart />
+                    {/* Chart Section with Timeframe Selector */}
+                    <div className="glass-panel p-6 relative">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold">Net Worth</h3>
+                            <div className="flex bg-[var(--color-foreground)]/5 p-1 rounded-lg">
+                                {["1W", "1M", "3M", "1Y", "ALL"].map((tf) => (
+                                    <button
+                                        key={tf}
+                                        onClick={() => setTimeframe(tf)}
+                                        className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${timeframe === tf ? 'bg-[var(--color-foreground)] text-[var(--color-background)] shadow-sm' : 'text-[var(--color-foreground)]/60 hover:text-[var(--color-foreground)]'}`}
+                                    >
+                                        {tf}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="h-[350px]">
+                            <NetWorthChart />
+                        </div>
                     </div>
 
                     {/* Transactions Area */}
