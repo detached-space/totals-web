@@ -7,7 +7,7 @@ export default function Topbar() {
     const title = pathname === "/" ? "Overview" : pathname.split("/")[1].charAt(0).toUpperCase() + pathname.split("/")[1].slice(1);
 
     return (
-        <header className="flex justify-between items-end pb-6 border-b border-[var(--color-card-border)] mb-8">
+        <header className="flex justify-between items-end pb-6 border-b border-[var(--color-card-border)] mb-8 ml-4 mt-2">
             <div>
                 <h1 className="text-2xl font-bold text-[var(--color-foreground)] tracking-tight transition-colors duration-300">{title}</h1>
                 <p className="text-[var(--color-foreground)] opacity-40 text-sm transition-colors duration-300">Welcome back, Brook</p>
