@@ -1,142 +1,589 @@
-import { ArrowUpRight, ExternalLink } from "lucide-react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
-import type { Transaction } from "../../lib/types";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import { Download, Settings2, Activity } from "lucide-react";
+import type { Transaction, Account, DashboardData } from "../../lib/types";
+import { fetchDashboardData, fetchBanks, type ApiBank } from "../../lib/api";
+import { TransactionFiltersPanel } from "./transactions/TransactionFilters";
+import { TransactionTable } from "./transactions/TransactionTable";
+import { TransactionDetailDrawer } from "./transactions/TransactionDetailDrawer";
+import { TransactionTotalsBar } from "./transactions/TransactionTotalsBar";
+import { SearchBar } from "./transactions/SearchBar";
+import { BulkActions } from "./transactions/BulkActions";
+import type {
+  TransactionFilters,
+  TransactionTableColumn,
+} from "./transactions/types";
+import { Button } from "../ui/button";
 
-const transactions: Transaction[] = Array.from({ length: 20 }).map((_, i) => ({
-    amount: i % 2 === 0 ? -9.99 : -12.99,
-    reference: i % 2 === 0 ? "Spotify Premium" : "Apple Music",
-    creditor: i % 2 === 0 ? "Spotify" : "Apple",
-    time: "2023-10-24T10:23:00Z",
-    status: "CLEARED",
-    type: "DEBIT",
-    transactionLink: "https://example.com/receipt",
-    accountNumber: "8821",
-    bankId: i % 3 === 0 ? 1 : i % 3 === 1 ? 2 : 3
-}));
-
-const dataAmount = [
-    { name: 'Awash', value: 400 },
-    { name: 'Telebirr', value: 300 },
-    { name: 'CBE', value: 300 },
-    { name: 'Dashen', value: 200 },
+// Default table columns configuration - compact widths
+const DEFAULT_COLUMNS: TransactionTableColumn[] = [
+  {
+    id: "date",
+    label: "Date",
+    width: 110,
+    sticky: true,
+    visible: true,
+    order: 1,
+  },
+  { id: "direction", label: "Dir", width: 60, visible: true, order: 2 },
+  {
+    id: "amount",
+    label: "Amount",
+    width: 100,
+    sticky: true,
+    visible: true,
+    order: 3,
+  },
+  { id: "currency", label: "Cur", width: 50, visible: false, order: 4 },
+  { id: "bank", label: "Bank", width: 60, visible: true, order: 5 },
+  { id: "account", label: "Account", width: 80, visible: true, order: 6 },
+  {
+    id: "counterparty",
+    label: "Counterparty",
+    width: 120,
+    visible: true,
+    order: 7,
+  },
+  { id: "reference", label: "Reference", width: 140, visible: true, order: 8 },
+  { id: "category", label: "Category", width: 100, visible: true, order: 9 },
+  { id: "status", label: "Status", width: 80, visible: true, order: 10 },
+  { id: "notes", label: "Notes", width: 120, visible: false, order: 11 },
 ];
-
-const dataQty = [
-    { name: 'Awash', value: 12 },
-    { name: 'Telebirr', value: 18 },
-    { name: 'CBE', value: 8 },
-    { name: 'Dashen', value: 5 },
-];
-
-const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042'];
 
 export default function Transactions() {
-    return (
-        <div className="min-h-screen px-8 pb-8 text-[var(--color-foreground)] max-w-[1600px] mx-auto">
-            <h1 className="text-3xl font-bold mb-8">Transactions</h1>
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [banks, setBanks] = useState<ApiBank[]>([]);
+  const [filters, setFilters] = useState<TransactionFilters>({
+    dateRange: "All",
+    selectedBanks: [],
+    selectedAccounts: [],
+    direction: "all",
+    tags: [],
+    status: [],
+    missingReference: false,
+    duplicateCandidates: false,
+    useRegex: false,
+  });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<Transaction | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [columns] = useState<TransactionTableColumn[]>(DEFAULT_COLUMNS);
+  const [sortColumn, setSortColumn] = useState<string>("date");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                {/* Pie Chart: Amount per Account */}
-                <div className="glass-panel p-6 h-[350px] flex flex-col">
-                    <h3 className="text-lg font-semibold mb-4">Volume by Account</h3>
-                    <div className="flex-1 w-full relative">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={dataAmount}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={60}
-                                    outerRadius={80}
-                                    fill="#8884d8"
-                                    paddingAngle={5}
-                                    dataKey="value"
-                                >
-                                    {dataAmount.map((_, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip
-                                    contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: 'none', borderRadius: '8px', color: '#fff' }}
-                                />
-                                <Legend verticalAlign="bottom" height={36} />
-                            </PieChart>
-                        </ResponsiveContainer>
-                        {/* Center Text */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none pb-8">
-                            <span className="text-2xl font-bold">$1.2k</span>
-                        </div>
-                    </div>
-                </div>
+  // Fetch data on mount
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+        setError(null);
+        const [dashboardData, banksData] = await Promise.all([
+          fetchDashboardData(),
+          fetchBanks(),
+        ]);
+        setData(dashboardData);
+        setBanks(banksData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load data");
+        console.error("Error loading transactions data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
 
-                {/* Pie Chart: Quantity per Account */}
-                <div className="glass-panel p-6 h-[350px] flex flex-col">
-                    <h3 className="text-lg font-semibold mb-4">Transactions by Account</h3>
-                    <div className="flex-1 w-full relative">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={dataQty}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={60}
-                                    outerRadius={80}
-                                    fill="#82ca9d"
-                                    paddingAngle={5}
-                                    dataKey="value"
-                                >
-                                    {dataQty.map((_, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip
-                                    contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: 'none', borderRadius: '8px', color: '#fff' }}
-                                />
-                                <Legend verticalAlign="bottom" height={36} />
-                            </PieChart>
-                        </ResponsiveContainer>
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none pb-8">
-                            <span className="text-2xl font-bold">43</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  // Create bank name mapping
+  const bankNameMap = useMemo(() => {
+    const map = new Map<number, string>();
+    banks.forEach((bank) => {
+      map.set(bank.id, bank.shortName || bank.name);
+    });
+    return map;
+  }, [banks]);
 
-            {/* Transactions List */}
-            <div className="glass-panel p-6 overflow-hidden flex flex-col">
-                <h3 className="text-xl font-semibold mb-6">Recent Activity</h3>
-                <div className="flex flex-col gap-4">
-                    {transactions.map((t, i) => (
-                        <div key={i} className="flex items-center justify-between p-4 rounded-xl hover:bg-[var(--color-foreground)]/5 transition-colors border border-transparent hover:border-[var(--color-card-border)] group">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center">
-                                    <ArrowUpRight size={20} />
-                                </div>
-                                <div>
-                                    <h4 className="font-medium text-[var(--color-foreground)]">{t.reference}</h4>
-                                    <p className="text-xs text-[var(--color-foreground)] opacity-50">
-                                        {t.bankId === 1 ? 'Awash' : t.bankId === 2 ? 'Telebirr' : 'CBE'} • {new Date(t.time || "").toLocaleDateString()}
-                                    </p>
-                                </div>
-                            </div>
+  // Helper to get bank name
+  const getBankName = useCallback(
+    (bankId?: number): string => {
+      if (!bankId) return "N/A";
+      return bankNameMap.get(bankId) || `Bank ${bankId}`;
+    },
+    [bankNameMap]
+  );
 
-                            <div className="flex items-center gap-6">
-                                <span className="font-bold text-[var(--color-foreground)]">{t.amount}</span>
-                                {t.transactionLink && (
-                                    <a
-                                        href={t.transactionLink}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="px-3 py-1.5 rounded-lg bg-[var(--color-foreground)]/10 hover:bg-[var(--color-foreground)]/20 text-xs font-medium text-[var(--color-foreground)] transition-colors flex items-center gap-2 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 duration-200"
-                                    >
-                                        Open <ExternalLink size={12} />
-                                    </a>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
+  // Generate IDs for transactions that don't have them
+  const transactionsWithIds = useMemo(() => {
+    if (!data?.transactions) return [];
+    return (data.transactions || []).map((t, idx) => ({
+      ...t,
+      id: t.id || `txn-${idx}`,
+      currency: t.currency || "ETB",
+    }));
+  }, [data?.transactions]);
+
+  // Get available banks and accounts
+  const availableBanks = useMemo(() => {
+    const bankSet = new Set(
+      transactionsWithIds.map((t) => t.bankId).filter(Boolean)
     );
+    return Array.from(bankSet).sort() as number[];
+  }, [transactionsWithIds]);
+
+  const accounts = useMemo(() => {
+    return (data?.accounts || []) as Account[];
+  }, [data?.accounts]);
+
+  const availableCategories = useMemo(() => {
+    const cats = new Set<string>();
+    transactionsWithIds.forEach((t) => {
+      if (t.category) cats.add(t.category);
+    });
+    return Array.from(cats).sort();
+  }, [transactionsWithIds]);
+
+  const availableTags = useMemo(() => {
+    const tags = new Set<string>();
+    transactionsWithIds.forEach((t) => {
+      if (t.tags) t.tags.forEach((tag) => tags.add(tag));
+    });
+    return Array.from(tags).sort();
+  }, [transactionsWithIds]);
+
+  // Apply filters and search
+  const filteredTransactions = useMemo(() => {
+    let filtered = [...transactionsWithIds];
+
+    // Date range filter
+    if (filters.dateRange !== "All") {
+      const now = new Date();
+      let startDate: Date | null = null;
+      let endDate: Date | null = null;
+
+      switch (filters.dateRange) {
+        case "Today": {
+          startDate = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate()
+          );
+          endDate = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(),
+            23,
+            59,
+            59
+          );
+          break;
+        }
+        case "WTD": {
+          const dayOfWeek = now.getDay();
+          startDate = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate() - dayOfWeek
+          );
+          endDate = now;
+          break;
+        }
+        case "MTD": {
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+          endDate = now;
+          break;
+        }
+        case "QTD": {
+          const quarter = Math.floor(now.getMonth() / 3);
+          startDate = new Date(now.getFullYear(), quarter * 3, 1);
+          endDate = now;
+          break;
+        }
+        case "YTD": {
+          startDate = new Date(now.getFullYear(), 0, 1);
+          endDate = now;
+          break;
+        }
+        case "Custom": {
+          if (filters.customStartDate) startDate = filters.customStartDate;
+          if (filters.customEndDate) {
+            endDate = new Date(filters.customEndDate);
+            endDate.setHours(23, 59, 59, 999);
+          }
+          break;
+        }
+      }
+
+      if (startDate || endDate) {
+        filtered = filtered.filter((t) => {
+          if (!t.time) return false;
+          const tDate = new Date(t.time);
+          if (startDate && tDate < startDate) return false;
+          if (endDate && tDate > endDate) return false;
+          return true;
+        });
+      }
+    }
+
+    // Bank filter
+    if (filters.selectedBanks.length > 0) {
+      filtered = filtered.filter(
+        (t) => t.bankId && filters.selectedBanks.includes(t.bankId)
+      );
+    }
+
+    // Account filter
+    if (filters.selectedAccounts.length > 0) {
+      filtered = filtered.filter(
+        (t) =>
+          t.accountNumber && filters.selectedAccounts.includes(t.accountNumber)
+      );
+    }
+
+    // Direction filter
+    if (filters.direction !== "all") {
+      filtered = filtered.filter((t) => {
+        if (filters.direction === "inflow") {
+          return t.type === "CREDIT" || t.amount > 0;
+        }
+        if (filters.direction === "outflow") {
+          return t.type === "DEBIT" || t.amount < 0;
+        }
+        // transfer logic would go here
+        return false;
+      });
+    }
+
+    // Amount range
+    if (filters.minAmount !== undefined) {
+      filtered = filtered.filter(
+        (t) => Math.abs(t.amount) >= filters.minAmount!
+      );
+    }
+    if (filters.maxAmount !== undefined) {
+      filtered = filtered.filter(
+        (t) => Math.abs(t.amount) <= filters.maxAmount!
+      );
+    }
+
+    // Counterparty filter
+    if (filters.counterparty) {
+      const query = filters.counterparty.toLowerCase();
+      filtered = filtered.filter(
+        (t) =>
+          t.counterparty?.toLowerCase().includes(query) ||
+          t.creditor?.toLowerCase().includes(query) ||
+          t.receiver?.toLowerCase().includes(query)
+      );
+    }
+
+    // Category filter
+    if (filters.category) {
+      filtered = filtered.filter((t) => t.category === filters.category);
+    }
+
+    // Tags filter
+    if (filters.tags.length > 0) {
+      filtered = filtered.filter((t) =>
+        t.tags?.some((tag) => filters.tags.includes(tag))
+      );
+    }
+
+    // Status filter
+    if (filters.status.length > 0) {
+      filtered = filtered.filter((t) => {
+        if (
+          filters.status.includes("Parsed") &&
+          t.parsingConfidence !== undefined
+        )
+          return true;
+        if (
+          filters.status.includes("Manual") &&
+          t.parsingConfidence === undefined
+        )
+          return true;
+        if (filters.status.includes("Unclassified") && !t.category) return true;
+        if (filters.status.includes("Flagged") && t.isFlagged) return true;
+        return false;
+      });
+    }
+
+    // Technical filters
+    if (filters.minConfidence !== undefined) {
+      filtered = filtered.filter(
+        (t) => (t.parsingConfidence || 0) >= filters.minConfidence!
+      );
+    }
+    if (filters.missingReference) {
+      filtered = filtered.filter(
+        (t) => !t.reference || t.reference.trim() === ""
+      );
+    }
+    if (filters.duplicateCandidates) {
+      filtered = filtered.filter((t) => t.isDuplicate === true);
+    }
+    if (filters.smsSenderId) {
+      filtered = filtered.filter((t) => t.smsSenderId === filters.smsSenderId);
+    }
+
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      if (filters.useRegex) {
+        try {
+          const regex = new RegExp(query, "i");
+          filtered = filtered.filter(
+            (t) =>
+              regex.test(t.reference) ||
+              regex.test(t.creditor || "") ||
+              regex.test(t.counterparty || "") ||
+              regex.test(String(t.amount)) ||
+              regex.test(t.accountNumber || "")
+          );
+        } catch {
+          // Invalid regex, fall back to simple search
+        }
+      } else {
+        filtered = filtered.filter(
+          (t) =>
+            t.reference?.toLowerCase().includes(query) ||
+            t.creditor?.toLowerCase().includes(query) ||
+            t.counterparty?.toLowerCase().includes(query) ||
+            String(t.amount).includes(query) ||
+            t.accountNumber?.includes(query)
+        );
+      }
+    }
+
+    return filtered;
+  }, [transactionsWithIds, filters, searchQuery]);
+
+  const selectedTransactions = useMemo(() => {
+    return filteredTransactions.filter((t) => selectedIds.has(t.id || ""));
+  }, [filteredTransactions, selectedIds]);
+
+  const handleRowClick = useCallback((transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setDrawerOpen(true);
+  }, []);
+
+  const handleCellEdit = useCallback(
+    (transactionId: string, field: string, value: string) => {
+      // In a real app, this would make an API call
+      console.log("Edit transaction", transactionId, field, value);
+    },
+    []
+  );
+
+  const handleSortChange = useCallback(
+    (column: string, direction: "asc" | "desc") => {
+      setSortColumn(column);
+      setSortDirection(direction);
+    },
+    []
+  );
+
+  const handleBulkCategory = useCallback(
+    (category: string) => {
+      selectedIds.forEach((id) => {
+        handleCellEdit(id, "category", category);
+      });
+    },
+    [selectedIds, handleCellEdit]
+  );
+
+  const handleBulkCounterparty = useCallback(
+    (counterparty: string) => {
+      selectedIds.forEach((id) => {
+        handleCellEdit(id, "counterparty", counterparty);
+      });
+    },
+    [selectedIds, handleCellEdit]
+  );
+
+  const handleBulkTags = useCallback(
+    (tags: string[]) => {
+      selectedIds.forEach((id) => {
+        handleCellEdit(id, "tags", tags.join(","));
+      });
+    },
+    [selectedIds, handleCellEdit]
+  );
+
+  const handleBulkReviewed = useCallback(() => {
+    selectedIds.forEach((id) => {
+      handleCellEdit(id, "isReviewed", "true");
+    });
+  }, [selectedIds, handleCellEdit]);
+
+  const handleBulkFlag = useCallback(() => {
+    selectedIds.forEach((id) => {
+      handleCellEdit(id, "isFlagged", "true");
+    });
+  }, [selectedIds, handleCellEdit]);
+
+  const handleExport = useCallback(() => {
+    const csv = [
+      [
+        "Date",
+        "Amount",
+        "Currency",
+        "Bank",
+        "Account",
+        "Counterparty",
+        "Reference",
+        "Category",
+        "Status",
+      ].join(","),
+      ...selectedTransactions.map((t) =>
+        [
+          t.time || "",
+          t.amount,
+          t.currency || "ETB",
+          `Bank ${t.bankId || ""}`,
+          t.accountNumber || "",
+          t.counterparty || t.creditor || "",
+          t.reference || "",
+          t.category || "",
+          t.status || "",
+        ].join(",")
+      ),
+    ].join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `transactions-${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [selectedTransactions]);
+
+  if (loading) {
+    return (
+      <div className="h-[96vh] flex items-center justify-center bg-[var(--color-background)]">
+        <div className="text-center">
+          <Activity
+            className="animate-spin mx-auto mb-4 text-muted-foreground"
+            size={32}
+          />
+          <p className="text-muted-foreground">Loading transactions...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-[96vh] flex items-center justify-center bg-[var(--color-background)]">
+        <div className="text-center">
+          <p className="text-destructive mb-4">Error: {error}</p>
+          <Button onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return null;
+  }
+
+  return (
+    <div className="h-[96vh] flex flex-col bg-[var(--color-background)] overflow-hidden ">
+      {/* Header */}
+      <div className="bg-[var(--color-background)] px-4 py-2 sticky top-0 z-30">
+        <h1 className="text-xl font-bold text-[var(--color-foreground)]">
+          Transactions
+        </h1>
+      </div>
+
+      {/* Search Bar */}
+      <div className="border-b border-[var(--color-card-border)] px-4 py-2 bg-[var(--color-background)] flex items-center justify-between gap-4">
+        <div className="flex-1">
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            useRegex={filters.useRegex}
+            onRegexToggle={(useRegex) => setFilters({ ...filters, useRegex })}
+          />
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <Button variant="outline" size="sm" className="h-7 px-2">
+            <Settings2 size={14} className="mr-1" />
+            <span className="text-xs">Columns</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExport}
+            className="h-7 px-2"
+          >
+            <Download size={14} className="mr-1" />
+            <span className="text-xs">Export</span>
+          </Button>
+        </div>
+      </div>
+
+      {/* Bulk Actions */}
+      <BulkActions
+        selectedCount={selectedIds.size}
+        onAssignCategory={handleBulkCategory}
+        onAssignCounterparty={handleBulkCounterparty}
+        onAddTags={handleBulkTags}
+        onMarkReviewed={handleBulkReviewed}
+        onFlag={handleBulkFlag}
+        onExport={handleExport}
+        availableCategories={availableCategories}
+      />
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex overflow-hidden min-w-0">
+        {/* Filter Panel */}
+        <div className="shrink-0">
+          <TransactionFiltersPanel
+            filters={filters}
+            onFiltersChange={setFilters}
+            accounts={accounts}
+            availableBanks={availableBanks}
+            availableCategories={availableCategories}
+            availableTags={availableTags}
+            getBankName={getBankName}
+          />
+        </div>
+
+        {/* Table Area */}
+        <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+          <TransactionTable
+            transactions={filteredTransactions}
+            columns={columns}
+            selectedIds={selectedIds}
+            onSelectionChange={setSelectedIds}
+            onRowClick={handleRowClick}
+            onCellEdit={handleCellEdit}
+            sortColumn={sortColumn}
+            sortDirection={sortDirection}
+            onSortChange={handleSortChange}
+            getBankName={getBankName}
+          />
+        </div>
+      </div>
+
+      {/* Totals Bar */}
+      <div className="shrink-0">
+        <TransactionTotalsBar
+          transactions={filteredTransactions}
+          selectedTransactions={selectedTransactions}
+        />
+      </div>
+
+      {/* Detail Drawer */}
+      <TransactionDetailDrawer
+        transaction={selectedTransaction}
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+        getBankName={getBankName}
+      />
+    </div>
+  );
 }
