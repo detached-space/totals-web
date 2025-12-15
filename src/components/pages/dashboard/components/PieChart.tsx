@@ -16,6 +16,7 @@ export interface PieChartProps {
   selectedBanks: number[];
   customStartDate?: string;
   customEndDate?: string;
+  getBankName?: (bankId: number) => string;
 }
 
 const COLORS = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6"];
@@ -27,6 +28,7 @@ export function PieChart({
   selectedBanks,
   customStartDate,
   customEndDate,
+  getBankName,
 }: PieChartProps) {
   // Filter and group data by bank
   const pieData = useMemo(() => {
@@ -96,7 +98,7 @@ export function PieChart({
     });
 
     return Object.entries(grouped).map(([bankId, value]) => ({
-      name: `Bank ${bankId}`,
+      name: getBankName ? getBankName(parseInt(bankId)) : `Bank ${bankId}`,
       value,
       bankId: parseInt(bankId),
     }));
@@ -107,6 +109,7 @@ export function PieChart({
     dateFilter,
     customStartDate,
     customEndDate,
+    getBankName,
   ]);
 
   return (
@@ -141,9 +144,17 @@ export function PieChart({
             </Pie>
             <Tooltip
               contentStyle={{
-                background: "rgba(0,0,0,0.9)",
-                border: "1px solid rgba(255,255,255,0.1)",
+                backgroundColor: "hsl(var(--popover))",
+                border: "1px solid hsl(var(--border))",
                 borderRadius: "6px",
+                color: "hsl(var(--popover-foreground))",
+                padding: "8px 12px",
+              }}
+              itemStyle={{
+                color: "hsl(var(--popover-foreground))",
+              }}
+              labelStyle={{
+                color: "hsl(var(--popover-foreground))",
               }}
               formatter={(value: number) =>
                 `ETB ${value.toLocaleString("en-US", {

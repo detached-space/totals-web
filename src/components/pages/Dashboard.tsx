@@ -11,6 +11,7 @@ import {
 } from "../ui/select";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
+import { ApiError } from "../ui/api-error";
 import { format } from "date-fns";
 import AccountCard from "../cards/AccountCard";
 import {
@@ -26,7 +27,7 @@ import {
   TransactionCountCard,
   UniqueCounterpartiesCard,
 } from "./dashboard/components";
-import type { FilterState, PLFilter } from "./dashboard/types";
+import type { PLFilter } from "./dashboard/types";
 
 export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -56,14 +57,6 @@ export default function Dashboard() {
     }
     loadData();
   }, []);
-
-  const [filters] = useState<FilterState>({
-    dateRange: "Today",
-    timeGranularity: "day",
-    selectedBanks: [],
-    selectedAccounts: [],
-    transactionType: "all",
-  });
 
   // State for P&L heatmap filter (income, expense, or all)
   const [plFilter, setPlFilter] = useState<PLFilter>("all");
@@ -180,33 +173,27 @@ export default function Dashboard() {
     [bankNameMap]
   );
 
-  // Filter transactions based on current filters
+  // Filter transactions based on chart filters (for KPIs and charts)
   const filteredTransactions = useMemo(() => {
     if (!data || !data.transactions) return [];
     let filtered = [...data.transactions];
 
-    // Date range filter
-    if (filters.dateRange !== "All") {
-      const now = new Date();
-      let startDate: Date;
-      switch (filters.dateRange) {
-        case "Today": {
-          startDate = new Date(
-            now.getFullYear(),
-            now.getMonth(),
-            now.getDate()
-          );
-          break;
-        }
-        case "Yesterday": {
-          startDate = new Date(
-            now.getFullYear(),
-            now.getMonth(),
-            now.getDate() - 1
-          );
-          break;
-        }
-        case "This Week": {
+    // Date range filter based on chartDateFilter
+    const now = new Date();
+    let startDate: Date;
+    let endDate: Date = new Date();
+
+    if (
+      chartDateFilter === "custom" &&
+      chartCustomStartDate &&
+      chartCustomEndDate
+    ) {
+      startDate = new Date(chartCustomStartDate);
+      endDate = new Date(chartCustomEndDate);
+      endDate.setHours(23, 59, 59, 999);
+    } else {
+      switch (chartDateFilter) {
+        case "week": {
           const dayOfWeek = now.getDay();
           startDate = new Date(
             now.getFullYear(),
@@ -215,70 +202,48 @@ export default function Dashboard() {
           );
           break;
         }
-        case "This Month": {
+        case "month": {
           startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+          break;
+        }
+        case "year": {
+          startDate = new Date(now.getFullYear(), 0, 1);
           break;
         }
         default:
           startDate = new Date(0);
       }
-
-      if (
-        filters.dateRange === "Custom" &&
-        filters.customStartDate &&
-        filters.customEndDate
-      ) {
-        startDate = new Date(filters.customStartDate);
-        const endDate = new Date(filters.customEndDate);
-        filtered = filtered.filter((t) => {
-          if (!t.time) return false;
-          const tDate = new Date(t.time);
-          return tDate >= startDate && tDate <= endDate;
-        });
-      } else {
-        filtered = filtered.filter((t) => {
-          if (!t.time) return false;
-          return new Date(t.time) >= startDate;
-        });
-      }
     }
 
-    // Bank filter
-    if (filters.selectedBanks.length > 0) {
+    filtered = filtered.filter((t) => {
+      if (!t.time) return false;
+      const tDate = new Date(t.time);
+      return tDate >= startDate && tDate <= endDate;
+    });
+
+    // Bank filter based on chartSelectedBanks
+    if (chartSelectedBanks.length > 0) {
       filtered = filtered.filter(
-        (t) => t.bankId && filters.selectedBanks.includes(t.bankId)
+        (t) => t.bankId && chartSelectedBanks.includes(t.bankId)
       );
     }
 
-    // Account filter
-    if (filters.selectedAccounts.length > 0) {
-      filtered = filtered.filter(
-        (t) =>
-          t.accountNumber && filters.selectedAccounts.includes(t.accountNumber)
-      );
-    }
-
-    // Transaction type filter
-    if (filters.transactionType === "income") {
+    // Transaction type filter based on chartTransactionTypeFilter
+    if (chartTransactionTypeFilter === "credit") {
       filtered = filtered.filter((t) => t.type === "CREDIT");
-    } else if (filters.transactionType === "expense") {
+    } else if (chartTransactionTypeFilter === "debit") {
       filtered = filtered.filter((t) => t.type === "DEBIT");
     }
 
-    // Amount filter
-    if (filters.minAmount !== undefined) {
-      filtered = filtered.filter(
-        (t) => Math.abs(t.amount) >= filters.minAmount!
-      );
-    }
-    if (filters.maxAmount !== undefined) {
-      filtered = filtered.filter(
-        (t) => Math.abs(t.amount) <= filters.maxAmount!
-      );
-    }
-
     return filtered;
-  }, [data, filters]);
+  }, [
+    data,
+    chartDateFilter,
+    chartCustomStartDate,
+    chartCustomEndDate,
+    chartSelectedBanks,
+    chartTransactionTypeFilter,
+  ]);
 
   // Calculate daily P&L for heatmap - use all transactions for the displayed month, not filtered
   // Use currentMonth to prevent flickering during month changes
@@ -477,12 +442,23 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-destructive mb-4">Error: {error}</p>
-          <Button onClick={() => window.location.reload()}>Retry</Button>
-        </div>
-      </div>
+      <ApiError
+        onRetry={() => {
+          setError(null);
+          setLoading(true);
+          Promise.all([fetchDashboardData(), fetchBanks()])
+            .then(([dashboardData, banksData]) => {
+              setData(dashboardData);
+              setBanks(banksData);
+            })
+            .catch((err) => {
+              setError(err instanceof Error ? err.message : "Failed to load data");
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+        }}
+      />
     );
   }
 
@@ -831,6 +807,7 @@ export default function Dashboard() {
                   customEndDate={
                     chartCustomEndDate?.toISOString().split("T")[0] || ""
                   }
+                  getBankName={getBankName}
                 />
               </div>
             </div>

@@ -17,6 +17,7 @@ import {
 } from "../ui/select";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
+import { ApiError } from "../ui/api-error";
 import { format } from "date-fns";
 import AccountCard from "../cards/AccountCard";
 import {
@@ -218,7 +219,7 @@ export default function Accounts() {
     }
   }, [showStartCalendar, showEndCalendar]);
 
-  // Filter transactions based on selected bank and account
+  // Filter transactions based on selected bank, account, and chart filters
   const filteredTransactions = useMemo(() => {
     if (!data || !data.transactions) return [];
     let filtered = [...data.transactions];
@@ -229,13 +230,8 @@ export default function Accounts() {
     );
 
     // Filter by account if specific account selected (not total)
-    // Try multiple matching strategies since accountNumber format may vary
     if (selectedAccount !== null) {
-      // If there's only one account for this bank, show all transactions
-      // (accountNumber matching may be inconsistent in dummy data)
-      if (bankAccounts.length === 1) {
-        // Keep all transactions for the bank
-      } else {
+      if (bankAccounts.length > 1) {
         // Try to match by accountNumber
         const accountFirst4 = selectedAccount.slice(0, 4);
         const accountLast4 = selectedAccount.slice(-4);
@@ -243,12 +239,6 @@ export default function Accounts() {
 
         const matched = filtered.filter((t) => {
           if (!t.accountNumber) return false;
-          // Check multiple matching strategies:
-          // 1. Matches first 4 digits
-          // 2. Matches last 4 digits
-          // 3. Matches middle 4 digits
-          // 4. Appears anywhere in account number
-          // 5. Account number contains transaction accountNumber
           return (
             t.accountNumber === accountFirst4 ||
             t.accountNumber === accountLast4 ||
@@ -259,16 +249,73 @@ export default function Accounts() {
           );
         });
 
-        // If we found matches, use them; otherwise show all transactions for the bank
         if (matched.length > 0) {
           filtered = matched;
         }
-        // If no matches found, keep all bank transactions (accountNumber might be inconsistent)
       }
     }
 
+    // Apply chart date filter
+    const now = new Date();
+    let startDate: Date;
+    let endDate: Date = new Date();
+
+    if (
+      chartDateFilter === "custom" &&
+      chartCustomStartDate &&
+      chartCustomEndDate
+    ) {
+      startDate = new Date(chartCustomStartDate);
+      endDate = new Date(chartCustomEndDate);
+      endDate.setHours(23, 59, 59, 999);
+    } else {
+      switch (chartDateFilter) {
+        case "week": {
+          const dayOfWeek = now.getDay();
+          startDate = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate() - dayOfWeek
+          );
+          break;
+        }
+        case "month": {
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+          break;
+        }
+        case "year": {
+          startDate = new Date(now.getFullYear(), 0, 1);
+          break;
+        }
+        default:
+          startDate = new Date(0);
+      }
+    }
+
+    filtered = filtered.filter((t) => {
+      if (!t.time) return false;
+      const tDate = new Date(t.time);
+      return tDate >= startDate && tDate <= endDate;
+    });
+
+    // Apply chart transaction type filter
+    if (chartTransactionTypeFilter === "credit") {
+      filtered = filtered.filter((t) => t.type === "CREDIT");
+    } else if (chartTransactionTypeFilter === "debit") {
+      filtered = filtered.filter((t) => t.type === "DEBIT");
+    }
+
     return filtered;
-  }, [data, selectedBank, selectedAccount, bankAccounts]);
+  }, [
+    data,
+    selectedBank,
+    selectedAccount,
+    bankAccounts,
+    chartDateFilter,
+    chartCustomStartDate,
+    chartCustomEndDate,
+    chartTransactionTypeFilter,
+  ]);
 
   // Calculate daily P&L for heatmap - use all transactions for the displayed month
   const dailyPLData = useMemo(() => {
@@ -456,12 +503,25 @@ export default function Accounts() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-destructive mb-4">Error: {error}</p>
-          <Button onClick={() => window.location.reload()}>Retry</Button>
-        </div>
-      </div>
+      <ApiError
+        onRetry={() => {
+          setError(null);
+          setLoading(true);
+          Promise.all([fetchDashboardData(), fetchBanks()])
+            .then(([dashboardData, banksData]) => {
+              setData(dashboardData);
+              setBanks(banksData);
+            })
+            .catch((err) => {
+              setError(
+                err instanceof Error ? err.message : "Failed to load data"
+              );
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+        }}
+      />
     );
   }
 
@@ -917,6 +977,7 @@ export default function Accounts() {
                   customEndDate={
                     chartCustomEndDate?.toISOString().split("T")[0] || ""
                   }
+                  getBankName={getBankName}
                 />
               </div>
             </div>

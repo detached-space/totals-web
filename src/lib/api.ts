@@ -8,10 +8,10 @@ import type {
 } from "./types";
 
 // Use the current window location (where Vite app is running) and append /api
-const API_BASE_URL = `${window.location.origin}/api`;
+export const API_BASE_URL = `${window.location.origin}/api`;
 
 // Extract base URL (host and port) for endpoints outside /api
-const API_HOST = window.location.origin;
+export const API_HOST = window.location.origin;
 
 // Helper function to handle API errors
 async function handleResponse<T>(response: Response): Promise<T> {

@@ -4,8 +4,9 @@ import {
   Users,
   PanelLeft,
   PanelRight,
-  HelpCircle,
   LayoutDashboard,
+  BookOpen,
+  Heart,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/logo.svg";
@@ -22,12 +23,14 @@ import {
   SidebarFooter,
   useSidebar,
 } from "../ui/sidebar";
+import { Button } from "../ui/button";
 
 const nav = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: Wallet, label: "Accounts", path: "/accounts" },
   { icon: CreditCard, label: "Transactions", path: "/transactions" },
   { icon: Users, label: "People", path: "/people" },
+  { icon: BookOpen, label: "Docs", path: "/docs" },
 ];
 
 export default function AppSidebar() {
@@ -110,14 +113,27 @@ export default function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              tooltip="Support"
+              asChild
+              tooltip="Contact"
               className="text-sidebar-foreground/40 hover:text-sidebar-foreground/60"
             >
-              <HelpCircle />
-              <span>Support</span>
+              <a href="mailto:spacedetached@gmail.com">
+                <span>Got questions? Contact us</span>
+              </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
+        <Button asChild>
+          <a
+            href="https://jami.bio/detached"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full"
+          >
+            Support The Devs
+            <Heart className="size-4 text-red-500" />
+          </a>
+        </Button>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

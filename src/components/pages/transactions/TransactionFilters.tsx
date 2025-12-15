@@ -225,7 +225,19 @@ export function TransactionFiltersPanel({
               >
                 <Checkbox
                   checked={filters.selectedBanks.includes(bankId)}
-                  onCheckedChange={() => toggleBank(bankId)}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      // Add bank if not already in list
+                      if (!filters.selectedBanks.includes(bankId)) {
+                        toggleBank(bankId);
+                      }
+                    } else {
+                      // Remove bank if in list
+                      if (filters.selectedBanks.includes(bankId)) {
+                        toggleBank(bankId);
+                      }
+                    }
+                  }}
                 />
                 <span className="text-xs">
                   {getBankName ? getBankName(bankId) : `Bank ${bankId}`}

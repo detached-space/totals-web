@@ -4,6 +4,7 @@ import Dashboard from "./components/pages/Dashboard";
 import Accounts from "./components/pages/Accounts";
 import Transactions from "./components/pages/Transactions";
 import People from "./components/pages/People";
+import Docs from "./components/pages/Docs";
 import ThemeProvider from "./components/theme/ThemeProvider";
 import { SidebarProvider, SidebarInset } from "./components/ui/sidebar";
 import { MobileRedirect } from "./components/MobileRedirect";
@@ -32,6 +33,7 @@ export default function App() {
                 <Route path="/accounts" element={<Accounts />} />
                 <Route path="/transactions" element={<Transactions />} />
                 <Route path="/people" element={<People />} />
+                <Route path="/docs" element={<Docs />} />
               </Routes>
             </main>
           </SidebarInset>

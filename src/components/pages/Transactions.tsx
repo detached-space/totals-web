@@ -13,6 +13,7 @@ import type {
   TransactionTableColumn,
 } from "./transactions/types";
 import { Button } from "../ui/button";
+import { ApiError } from "../ui/api-error";
 
 // Default table columns configuration - compact widths
 const DEFAULT_COLUMNS: TransactionTableColumn[] = [
@@ -476,12 +477,25 @@ export default function Transactions() {
 
   if (error) {
     return (
-      <div className="h-[96vh] flex items-center justify-center bg-[var(--color-background)]">
-        <div className="text-center">
-          <p className="text-destructive mb-4">Error: {error}</p>
-          <Button onClick={() => window.location.reload()}>Retry</Button>
-        </div>
-      </div>
+      <ApiError
+        onRetry={() => {
+          setError(null);
+          setLoading(true);
+          Promise.all([fetchDashboardData(), fetchBanks()])
+            .then(([dashboardData, banksData]) => {
+              setData(dashboardData);
+              setBanks(banksData);
+            })
+            .catch((err) => {
+              setError(
+                err instanceof Error ? err.message : "Failed to load data"
+              );
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+        }}
+      />
     );
   }
 

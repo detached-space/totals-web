@@ -201,14 +201,38 @@ export function LineBarChart({
                   });
                 }}
               />
-              <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 11 }} />
+              <YAxis
+                stroke="rgba(255,255,255,0.3)"
+                tick={{ fontSize: 11 }}
+                tickFormatter={(value) => {
+                  if (value >= 1000000) {
+                    return `${(value / 1000000).toFixed(1)}M`;
+                  } else if (value >= 1000) {
+                    return `${(value / 1000).toFixed(1)}K`;
+                  }
+                  return value.toLocaleString("en-US");
+                }}
+              />
               <Tooltip
                 contentStyle={{
-                  background: "rgba(0,0,0,0.9)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  backgroundColor: "hsl(var(--popover))",
+                  border: "1px solid hsl(var(--border))",
                   borderRadius: "6px",
+                  color: "hsl(var(--popover-foreground))",
+                  padding: "8px 12px",
                 }}
-                labelStyle={{ color: "#fff", fontSize: "11px" }}
+                itemStyle={{
+                  color: "hsl(var(--popover-foreground))",
+                }}
+                labelStyle={{
+                  color: "hsl(var(--popover-foreground))",
+                }}
+                formatter={(value: number) =>
+                  `ETB ${value.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}`
+                }
               />
               <Legend />
               <Area
@@ -246,14 +270,38 @@ export function LineBarChart({
                   });
                 }}
               />
-              <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 11 }} />
+              <YAxis
+                stroke="rgba(255,255,255,0.3)"
+                tick={{ fontSize: 11 }}
+                tickFormatter={(value) => {
+                  if (value >= 1000000) {
+                    return `${(value / 1000000).toFixed(1)}M`;
+                  } else if (value >= 1000) {
+                    return `${(value / 1000).toFixed(1)}K`;
+                  }
+                  return value.toLocaleString("en-US");
+                }}
+              />
               <Tooltip
                 contentStyle={{
-                  background: "rgba(0,0,0,0.9)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  backgroundColor: "hsl(var(--popover))",
+                  border: "1px solid hsl(var(--border))",
                   borderRadius: "6px",
+                  color: "hsl(var(--popover-foreground))",
+                  padding: "8px 12px",
                 }}
-                labelStyle={{ color: "#fff", fontSize: "11px" }}
+                itemStyle={{
+                  color: "hsl(var(--popover-foreground))",
+                }}
+                labelStyle={{
+                  color: "hsl(var(--popover-foreground))",
+                }}
+                formatter={(value: number) =>
+                  `ETB ${value.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}`
+                }
               />
               <Legend />
               <Bar dataKey="credit" fill="#3b82f6" name="Credit" />
