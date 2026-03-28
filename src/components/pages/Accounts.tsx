@@ -1,94 +1,175 @@
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { motion } from "framer-motion";
 import AccountCard from "../cards/AccountCard";
+import GlassCard from "../shared/GlassCard";
+import TransactionItem from "../widgets/TransactionItem";
 import NetWorthChart from "../charts/NetWorthChart";
-import TransactionsTable from "../tables/TransactionsTable";
+import DonutChart from "../charts/DonutChart";
+import { accounts, transactions, spendingCategories } from "../../lib/data";
+import { getLogo, getBankName, formatCurrency } from "../../lib/helpers";
+import { BarChart, Bar, XAxis, ResponsiveContainer, Cell, Tooltip } from "recharts";
 
-const accounts = [
-    { "id": 1, "name": "Comercial bank of ethiopia", "balance": 24500.80, "accountNumber": "8821 2514 12412 21" },
-    { "id": 2, "name": "Awash", "balance": 24500.80, "accountNumber": "8821" },
-    { "id": 3, "name": "Bank of Abysinna", "balance": 12400.00, "accountNumber": "3321" },
-    { "id": 4, "name": "Dashen", "balance": 24500.80, "accountNumber": "8821" },
-    { "id": 6, "name": "Telebirr", "balance": 24500.80, "accountNumber": "8821" },
-]
+const containerVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.06 } },
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 16 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] } },
+};
+
+const barColors = ['#a78bfa', '#60a5fa', '#fbbf24', '#f87171', '#34d399'];
 
 export default function Accounts() {
-    const [selectedAccount, setSelectedAccount] = useState(accounts[0]);
-    const [timeframe, setTimeframe] = useState("This Month");
+    const [selectedId, setSelectedId] = useState(accounts[0].id);
+    const selected = accounts.find(a => a.id === selectedId) || accounts[0];
+    const accountTransactions = transactions.filter(t => t.bankId === selectedId).slice(0, 6);
+
+    const comparisonData = accounts.map(a => ({
+        name: getBankName(a.id),
+        balance: a.balance,
+        id: a.id,
+    }));
 
     return (
-        <div className="min-h-screen px-8 pb-8 text-[var(--color-foreground)] max-w-[1600px] mx-auto">
-            <div className="flex justify-between items-center mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold">Accounts</h1>
-                    <p className="text-[var(--color-foreground)] opacity-60">Manage and view details for your connected accounts.</p>
-                </div>
-
-                {/* Account Selector Dropdown */}
-                <DropdownMenu.Root>
-                    <DropdownMenu.Trigger asChild>
-                        <button className="glass-button px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-medium outline-none">
-                            {selectedAccount.name}
-                            <ChevronDown size={16} className="opacity-50" />
-                        </button>
-                    </DropdownMenu.Trigger>
-
-                    <DropdownMenu.Portal>
-                        <DropdownMenu.Content className="min-w-[220px] glass-panel bg-black/80 backdrop-blur-xl border border-[var(--color-card-border)] rounded-xl p-1 shadow-xl z-50 animate-in fade-in zoom-in-95 duration-200" sideOffset={5}>
-                            {accounts.map((acc) => (
-                                <DropdownMenu.Item
-                                    key={acc.id}
-                                    className="text-sm px-3 py-2 rounded-lg outline-none cursor-pointer text-[var(--color-foreground)] hover:bg-[var(--color-foreground)]/10 transition-colors"
-                                    onClick={() => setSelectedAccount(acc)}
-                                >
-                                    {acc.name}
-                                </DropdownMenu.Item>
-                            ))}
-                        </DropdownMenu.Content>
-                    </DropdownMenu.Portal>
-                </DropdownMenu.Root>
-            </div>
-
-            <div className="grid grid-cols-12 gap-8">
-                {/* Selected Account Card - Full Width or Large */}
-                <div className="col-span-12 lg:col-span-4 h-[240px]">
-                    <AccountCard
-                        id={selectedAccount.id}
-                        name={selectedAccount.name}
-                        balance={selectedAccount.balance}
-                        accountNumber={selectedAccount.accountNumber}
-                    />
-                </div>
-
-                {/* Charts Area */}
-                <div className="col-span-12 lg:col-span-8 h-[500px]"> {/* Increased Height */}
-                    <div className="w-full h-full glass-panel p-8 flex flex-col"> {/* Increased Padding */}
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-xl font-semibold">Activity Overview</h3>
-                            <div className="flex bg-[var(--color-foreground)]/5 p-1 rounded-lg">
-                                {["1W", "1M", "3M", "1Y", "ALL"].map((tf) => (
-                                    <button
-                                        key={tf}
-                                        onClick={() => setTimeframe(tf)}
-                                        className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${timeframe === tf ? 'bg-[var(--color-foreground)] text-[var(--color-background)] shadow-sm' : 'text-[var(--color-foreground)]/60 hover:text-[var(--color-foreground)]'}`}
-                                    >
-                                        {tf}
-                                    </button>
-                                ))}
+        <div className="px-8 pb-8 max-w-[1600px] mx-auto">
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="flex flex-col gap-5"
+            >
+                {/* Card Carousel */}
+                <motion.div variants={itemVariants}>
+                    <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar snap-x snap-mandatory">
+                        {accounts.map((acc) => (
+                            <div
+                                key={acc.id}
+                                className="min-w-[300px] max-w-[340px] snap-start shrink-0"
+                            >
+                                <AccountCard
+                                    id={acc.id}
+                                    name={acc.name}
+                                    balance={acc.balance}
+                                    accountNumber={acc.accountNumber}
+                                    selected={acc.id === selectedId}
+                                    onClick={() => setSelectedId(acc.id)}
+                                />
                             </div>
-                        </div>
-                        <div className="flex-1 w-full min-h-0">
-                            <NetWorthChart />
-                        </div>
+                        ))}
                     </div>
+                </motion.div>
+
+                {/* Selected Account Detail */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                    {/* Balance Trend */}
+                    <motion.div variants={itemVariants} className="lg:col-span-2">
+                        <GlassCard padding="lg" hoverLift={false} className="h-full">
+                            <div className="flex items-center gap-3 mb-4">
+                                <img src={getLogo(selected.id)} alt="" className="w-6 h-6" />
+                                <h3 className="text-lg font-semibold text-[var(--foreground)]">{selected.name}</h3>
+                            </div>
+                            <NetWorthChart height={260} showHeader={false} />
+                        </GlassCard>
+                    </motion.div>
+
+                    {/* Account Info */}
+                    <motion.div variants={itemVariants}>
+                        <GlassCard padding="lg" hoverLift={false} className="h-full flex flex-col justify-between">
+                            <div>
+                                <p className="text-overline mb-3">Account Details</p>
+                                <div className="space-y-4">
+                                    <div>
+                                        <p className="text-xs text-[var(--muted)]">Bank</p>
+                                        <p className="text-sm font-semibold text-[var(--foreground)]">{selected.name}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-[var(--muted)]">Account Number</p>
+                                        <p className="text-sm font-mono text-[var(--foreground)]">{selected.accountNumber}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-[var(--muted)]">Balance</p>
+                                        <p className="text-2xl font-bold text-[var(--foreground)]">{formatCurrency(selected.balance)}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-[var(--muted)]">Status</p>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                                            <span className="text-sm text-emerald-400 font-medium">Active</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </GlassCard>
+                    </motion.div>
                 </div>
 
-                {/* Transactions Table */}
-                <div className="col-span-12 min-h-[500px]">
-                    <TransactionsTable />
+                {/* Transactions + Spending */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                    <motion.div variants={itemVariants} className="lg:col-span-2">
+                        <GlassCard padding="lg" hoverLift={false}>
+                            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Recent Transactions</h3>
+                            {accountTransactions.length > 0 ? (
+                                <div className="space-y-1">
+                                    {accountTransactions.map((t, i) => (
+                                        <TransactionItem key={i} transaction={t} />
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-sm text-[var(--muted)] py-8 text-center">No transactions for this account</p>
+                            )}
+                        </GlassCard>
+                    </motion.div>
+
+                    <motion.div variants={itemVariants}>
+                        <GlassCard padding="lg" hoverLift={false} className="h-full">
+                            <p className="text-sm font-semibold text-[var(--foreground)] mb-3">Spending by Category</p>
+                            <DonutChart
+                                data={spendingCategories}
+                                centerLabel="Total"
+                                centerValue={`$${spendingCategories.reduce((s, c) => s + c.value, 0).toLocaleString()}`}
+                                size="sm"
+                            />
+                        </GlassCard>
+                    </motion.div>
                 </div>
-            </div>
+
+                {/* All Accounts Comparison */}
+                <motion.div variants={itemVariants}>
+                    <GlassCard padding="lg" hoverLift={false}>
+                        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Account Balances</h3>
+                        <div className="h-[200px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={comparisonData} layout="vertical" margin={{ left: 60 }}>
+                                    <XAxis type="number" hide />
+                                    <Tooltip
+                                        content={({ active, payload }: any) => {
+                                            if (active && payload?.length) {
+                                                return (
+                                                    <div className="glass-panel-sm p-2 shadow-lg">
+                                                        <p className="text-xs text-[var(--muted)]">{payload[0].payload.name}</p>
+                                                        <p className="text-sm font-bold text-[var(--foreground)]">
+                                                            ${payload[0].value.toLocaleString()}
+                                                        </p>
+                                                    </div>
+                                                );
+                                            }
+                                            return null;
+                                        }}
+                                        cursor={{ fill: 'var(--card-border)', opacity: 0.3 }}
+                                    />
+                                    <Bar dataKey="balance" radius={[0, 6, 6, 0]} isAnimationActive animationDuration={800}>
+                                        {comparisonData.map((_, i) => (
+                                            <Cell key={i} fill={barColors[i % barColors.length]} />
+                                        ))}
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </GlassCard>
+                </motion.div>
+            </motion.div>
         </div>
     );
 }

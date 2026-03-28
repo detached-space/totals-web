@@ -1,88 +1,94 @@
+import { motion } from "framer-motion";
+import { bentoItemVariants } from "../layout/BentoGrid";
+import BalanceCard from "../cards/BalanceCard";
 import AccountCard from "../cards/AccountCard";
+import StatCard from "../cards/StatCard";
+import InsightCard from "../cards/InsightCard";
+import SpendingBreakdown from "../widgets/SpendingBreakdown";
+import QuickActions from "../widgets/QuickActions";
+import TransactionItem from "../widgets/TransactionItem";
 import NetWorthChart from "../charts/NetWorthChart";
-import TransactionsTable from "../tables/TransactionsTable";
-import TopPeople from "../widgets/QuickTransfer";
-import SpendingStats from "../widgets/SpendingStats";
-import TotalsCard from "../widgets/TotalsCard";
-import { useState } from "react";
+import GlassCard from "../shared/GlassCard";
+import { accounts, transactions, totalBalance, incomeTotal, expenseTotal } from "../../lib/data";
+import { ArrowRight, TrendingUp, ArrowDownLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
-const accounts = [
-    {
-        "id": 1, "name": "Comercial bank of ethiopia", "balance": 24500.80, "accountNumber": "8821 2514 12412 21"
-    },
-    { "id": 2, "name": "Awash", "balance": 24500.80, "accountNumber": "8821" },
-    { "id": 3, "name": "Bank of Abysinna", "balance": 12400.00, "accountNumber": "3321" },
-    {
-        "id": 4, "name": "Dashen", "balance": 24500.80, "accountNumber": "8821"
-    },
-    {
-        "id": 6, "name": "Telebirr", "balance": 24500.80, "accountNumber": "8821"
-    },
-]
+const containerVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.06 } },
+};
+
 export default function Dashboard() {
-    const [timeframe, setTimeframe] = useState("This Month");
+    const recentTransactions = transactions.slice(0, 5);
 
     return (
-        <div className="min-h-screen px-8 pb-8 text-[var(--color-foreground)] max-w-[1600px] mx-auto">
-            {/* Content Grid */}
-            <div className="grid grid-cols-12 gap-8">
+        <div className="px-8 pb-8 max-w-[1600px] mx-auto">
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="flex flex-col gap-5"
+            >
+                {/* Row 1: Balance + Account Mini Cards */}
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
+                    <BalanceCard total={totalBalance} trend={12.5} />
 
-                {/* Left Column (Cards + Chart + Transactions Table) */}
-                <div className="col-span-12 lg:col-span-8 flex flex-col gap-8">
-                    {/* Cards Scroll/Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {accounts.map((account, i) => (
+                    <motion.div variants={bentoItemVariants} className="lg:col-span-2 grid grid-cols-2 gap-3">
+                        {accounts.slice(0, 4).map((acc) => (
                             <AccountCard
-                                key={i}
-                                id={account.id}
-                                name={account.name}
-                                balance={account.balance}
-                                accountNumber={account.accountNumber}
+                                key={acc.id}
+                                id={acc.id}
+                                name={acc.name}
+                                balance={acc.balance}
+                                accountNumber={acc.accountNumber}
+                                compact
                             />
                         ))}
-
-                    </div>
-
-                    {/* Chart Section with Timeframe Selector */}
-                    <div className="glass-panel p-6 relative">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold">Net Worth</h3>
-                            <div className="flex bg-[var(--color-foreground)]/5 p-1 rounded-lg">
-                                {["1W", "1M", "3M", "1Y", "ALL"].map((tf) => (
-                                    <button
-                                        key={tf}
-                                        onClick={() => setTimeframe(tf)}
-                                        className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${timeframe === tf ? 'bg-[var(--color-foreground)] text-[var(--color-background)] shadow-sm' : 'text-[var(--color-foreground)]/60 hover:text-[var(--color-foreground)]'}`}
-                                    >
-                                        {tf}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="h-[350px]">
-                            <NetWorthChart />
-                        </div>
-                    </div>
-
-                    {/* Transactions Area */}
-                    <div className="flex-1 min-h-[400px]">
-                        <TransactionsTable />
-                    </div>
+                    </motion.div>
                 </div>
 
-                {/* Right Column (Sidebar Widgets) */}
-                <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
-                    <TotalsCard accounts={accounts} />
-                    <TopPeople />
-                    <div className="h-[350px]">
-                        <SpendingStats />
-                    </div>
-                </div>
-            </div>
+                {/* Row 2: Stats + Insight */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <StatCard title="Income" value={incomeTotal} icon={ArrowDownLeft} color="#22c55e" trend={8.2} />
+                    <StatCard title="Expenses" value={expenseTotal} icon={TrendingUp} color="#f87171" trend={-3.1} />
 
-            {/* Background Ambience */}
-            <div className="fixed top-20 left-10 w-96 h-96 bg-purple-600/20 blur-[120px] -z-10 rounded-full pointer-events-none mix-blend-screen" />
-            <div className="fixed bottom-10 right-10 w-96 h-96 bg-blue-600/10 blur-[120px] -z-10 rounded-full pointer-events-none mix-blend-screen" />
+                    <InsightCard
+                        message="You've spent 23% less on food this month compared to last. Keep it up!"
+                        type="success"
+                        className="sm:col-span-2"
+                    />
+                </div>
+
+                {/* Row 3: Chart + Spending + Quick Actions */}
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
+                    <motion.div variants={bentoItemVariants} className="lg:col-span-2">
+                        <GlassCard padding="lg" hoverLift={false} className="h-full">
+                            <NetWorthChart height={280} />
+                        </GlassCard>
+                    </motion.div>
+
+                    <SpendingBreakdown compact />
+
+                    <QuickActions />
+                </div>
+
+                {/* Row 4: Recent Transactions */}
+                <motion.div variants={bentoItemVariants}>
+                    <GlassCard padding="lg" hoverLift={false}>
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-semibold text-[var(--foreground)]">Recent Transactions</h3>
+                            <Link to="/transactions" className="text-xs text-[var(--accent)] hover:text-[var(--accent)]/80 flex items-center gap-1 transition-colors">
+                                View All <ArrowRight size={12} />
+                            </Link>
+                        </div>
+                        <div className="divide-y divide-[var(--card-border)]">
+                            {recentTransactions.map((t, i) => (
+                                <TransactionItem key={i} transaction={t} compact />
+                            ))}
+                        </div>
+                    </GlassCard>
+                </motion.div>
+            </motion.div>
         </div>
     );
 }
