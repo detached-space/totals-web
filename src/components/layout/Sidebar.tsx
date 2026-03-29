@@ -1,6 +1,6 @@
 import {
     Home, Wallet, CreditCard, ChevronLeft, ChevronRight,
-    BarChart3, Activity, PiggyBank, Sun, Moon
+    PiggyBank, Sun, Moon
 } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,8 +20,6 @@ const navGroups = [
     {
         label: "Insights",
         items: [
-            { icon: BarChart3, label: "Analytics", path: "/analytics" },
-            { icon: Activity, label: "Activity", path: "/activity", badge: 3 },
             { icon: PiggyBank, label: "Budget", path: "/budget" },
         ],
     },

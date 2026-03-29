@@ -51,11 +51,29 @@ export interface ActivityItem {
 }
 
 export interface Budget {
-    category: string;
-    budgeted: number;
-    spent: number;
-    color: string;
-    icon: string;
+    id: number;
+    name: string;
+    type: string;
+    amount: number;
+    categoryId?: number;
+    categoryIds?: number[];
+    startDate: string;
+    endDate?: string | null;
+    isActive: boolean;
+    categories?: Array<{ id: number; name: string; }>;
+    status?: {
+        spent: number;
+        remaining: number;
+        percentageUsed: number;
+        isExceeded: boolean;
+        isApproachingLimit: boolean;
+    };
+    // Legacy mock data properties
+    category?: string;
+    budgeted?: number;
+    spent?: number;
+    color?: string;
+    icon?: string;
 }
 
 export interface Goal {

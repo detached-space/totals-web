@@ -1,11 +1,10 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import GlassCard from "../shared/GlassCard";
 import BudgetProgress from "../widgets/BudgetProgress";
-import GoalCard from "../cards/GoalCard";
 import AnimatedCounter from "../shared/AnimatedCounter";
 import PillBarChart from "../charts/PillBarChart";
-import { budgets, goals, totalBudgeted, totalBudgetSpent, monthlyBudgetTracking } from "../../lib/data";
+import { monthlyBudgetTracking } from "../../lib/data";
 import { bentoItemVariants } from "../layout/BentoGrid";
 import { usePrivacy } from "../shared/PrivacyProvider";
 import { Flame, Target, TrendingDown } from "lucide-react";
@@ -15,13 +14,17 @@ const containerVariants = {
     visible: { transition: { staggerChildren: 0.06 } },
 };
 
-const overallPercentage = Math.round((totalBudgetSpent / totalBudgeted) * 100);
-const remaining = totalBudgeted - totalBudgetSpent;
-
-// Quick stats
-const onTrackCount = budgets.filter(b => b.spent / b.budgeted < 0.85).length;
-const warningCount = budgets.filter(b => b.spent / b.budgeted >= 0.85 && b.spent < b.budgeted).length;
-const overCount = budgets.filter(b => b.spent >= b.budgeted).length;
+interface Budget {
+    id: number;
+    name: string;
+    amount: number;
+    status?: {
+        spent: number;
+        remaining: number;
+        percentageUsed: number;
+        isExceeded: boolean;
+    };
+}
 
 export default function BudgetPage() {
     const { hidden } = usePrivacy();
@@ -29,14 +32,51 @@ export default function BudgetPage() {
     const { scrollYProgress } = useScroll({ target: scrollRef, offset: ["start start", "end start"] });
     const ringY = useTransform(scrollYProgress, [0, 1], [0, -30]);
 
+    const [budgets, setBudgets] = useState<Budget[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchBudgets = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/budgets?includeStatus=true');
+                if (response.ok) {
+                    const data = await response.json();
+                    setBudgets(data);
+                }
+            } catch (error) {
+                console.error('Failed to fetch budgets:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBudgets();
+    }, []);
+
+    // Calculate totals from budget statuses
+    const totalBudgeted = budgets.reduce((sum, b) => sum + b.amount, 0);
+    const totalBudgetSpent = budgets.reduce((sum, b) => sum + (b.status?.spent || 0), 0);
+    const remaining = totalBudgeted - totalBudgetSpent;
+    const overallPercentage = totalBudgeted > 0 ? Math.round((totalBudgetSpent / totalBudgeted) * 100) : 0;
+
+    // Quick stats
+    const onTrackCount = budgets.filter(b => !b.status?.isExceeded && (b.status?.percentageUsed || 0) < 85).length;
+    const warningCount = budgets.filter(b => !b.status?.isExceeded && (b.status?.percentageUsed || 0) >= 85).length;
+    const overCount = budgets.filter(b => b.status?.isExceeded).length;
+
     return (
-        <div ref={scrollRef} className="px-8 pb-8 max-w-[1600px] mx-auto">
-            <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="flex flex-col gap-5"
-            >
+        <div ref={scrollRef} className="px-8 pb-8 max-w-[1600px] mx-auto h-screen overflow-y-auto">
+            {loading ? (
+                <div className="flex items-center justify-center min-h-screen">
+                    <p className="text-[var(--muted)]">Loading budgets...</p>
+                </div>
+            ) : (
+                <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="flex flex-col gap-5"
+                >
                 {/* Row 1: Hero budget overview — colorful card like the inspiration */}
                 <motion.div
                     variants={bentoItemVariants}
@@ -171,26 +211,15 @@ export default function BudgetPage() {
                             </div>
                             <div className="space-y-1">
                                 {budgets.map((budget) => (
-                                    <BudgetProgress key={budget.category} budget={budget} />
+                                    <BudgetProgress key={budget.id} budget={budget} />
                                 ))}
                             </div>
                         </GlassCard>
                     </motion.div>
                 </div>
 
-                {/* Row 3: Savings Goals */}
-                <motion.div variants={bentoItemVariants}>
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-subsection-title text-[var(--foreground)]">Savings Goals</h3>
-                        <span className="brutal-tag bg-[var(--pop-blue)] text-[#1A1A2E]">{goals.length} active</span>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                        {goals.map((goal) => (
-                            <GoalCard key={goal.id} goal={goal} />
-                        ))}
-                    </div>
                 </motion.div>
-            </motion.div>
+            )}
         </div>
     );
 }
