@@ -42,7 +42,7 @@ export default function BudgetPage() {
                     variants={bentoItemVariants}
                     whileHover={{ x: -4, y: -4, boxShadow: '8px 8px 0px var(--card-border)', transition: { duration: 0.1 } }}
                     whileTap={{ x: 2, y: 2, boxShadow: '0px 0px 0px var(--card-border)', transition: { duration: 0.05 } }}
-                    className="brutal-card-accent p-6 relative overflow-hidden cursor-pointer"
+                    className="brutal-card-purple p-6 relative overflow-hidden cursor-pointer"
                 >
                     <div className="absolute top-0 right-0 w-14 h-14 bg-white/10 border-l-[var(--border-width)] border-b-[var(--border-width)] border-[var(--card-border)]" />
 

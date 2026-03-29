@@ -258,6 +258,14 @@ body {
   border-radius: var(--radius-lg);
 }
 
+.brutal-card-purple {
+  background: var(--pop-purple);
+  color: white;
+  border: var(--border-width) solid var(--card-border);
+  box-shadow: var(--shadow-brutal);
+  border-radius: var(--radius-lg);
+}
+
 /* ─── Bento Grid ──────────────────────────────────────────── */
 .bento-grid {
   display: grid;
