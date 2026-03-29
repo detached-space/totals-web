@@ -4,7 +4,7 @@ import { monthlyComparison } from "../../lib/data";
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload?.length) {
         return (
-            <div className="glass-panel-sm p-3 shadow-lg">
+            <div className="bg-[var(--card)] border-[var(--border-width)] border-[var(--card-border)] shadow-[var(--shadow-brutal)] rounded-lg p-3">
                 <p className="text-label-light mb-2">{label}</p>
                 {payload.map((p: any) => (
                     <p key={p.name} className="text-caption nums" style={{ color: p.color }}>

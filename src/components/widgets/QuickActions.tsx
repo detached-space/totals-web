@@ -3,10 +3,10 @@ import { Send, ArrowDownLeft, Receipt, Plus } from "lucide-react";
 import { bentoItemVariants } from "../layout/BentoGrid";
 
 const actions = [
-    { icon: Send, label: "Send", color: "#3b82f6" },
-    { icon: ArrowDownLeft, label: "Request", color: "#10B981" },
-    { icon: Receipt, label: "Pay Bills", color: "#f59e0b" },
-    { icon: Plus, label: "Top Up", color: "#a78bfa" },
+    { icon: Send, label: "Send", color: "var(--pop-blue)" },
+    { icon: ArrowDownLeft, label: "Request", color: "var(--pop-green)" },
+    { icon: Receipt, label: "Pay Bills", color: "var(--pop-yellow)" },
+    { icon: Plus, label: "Top Up", color: "var(--pop-purple)" },
 ];
 
 export default function QuickActions({ className = '' }: { className?: string }) {
@@ -15,22 +15,22 @@ export default function QuickActions({ className = '' }: { className?: string })
             variants={bentoItemVariants}
             className={`glass-panel p-5 ${className}`}
         >
-            <p className="text-xs text-[var(--muted)] font-medium mb-4">Quick Actions</p>
+            <p className="text-label-light mb-4">Quick Actions</p>
             <div className="grid grid-cols-2 gap-3">
                 {actions.map((action) => (
                     <motion.button
                         key={action.label}
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
-                        className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[var(--foreground)]/3 hover:bg-[var(--foreground)]/6 border border-[var(--card-border)] transition-colors cursor-pointer"
+                        whileHover={{ x: -2, y: -2, transition: { duration: 0.1 } }}
+                        whileTap={{ x: 1, y: 1, transition: { duration: 0.05 } }}
+                        className="flex flex-col items-center gap-2 p-4 rounded-lg border-[var(--border-width)] border-[var(--card-border)] shadow-[3px_3px_0px_var(--card-border)] bg-[var(--card)] cursor-pointer transition-all"
                     >
                         <div
-                            className="w-10 h-10 rounded-xl flex items-center justify-center"
-                            style={{ backgroundColor: `${action.color}15`, color: action.color }}
+                            className="w-10 h-10 rounded-lg flex items-center justify-center border-[var(--border-width)] border-[var(--card-border)]"
+                            style={{ backgroundColor: action.color, color: '#1A1A2E' }}
                         >
                             <action.icon size={20} />
                         </div>
-                        <span className="text-xs font-medium text-[var(--foreground)]">{action.label}</span>
+                        <span className="text-xs font-bold text-[var(--foreground)]">{action.label}</span>
                     </motion.button>
                 ))}
             </div>

@@ -5,7 +5,7 @@ import { netWorthData } from "../../lib/data";
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload?.length) {
         return (
-            <div className="glass-panel-sm p-3 shadow-xl animate-in" style={{ animation: 'tooltip-in 0.15s ease-out' }}>
+            <div className="bg-[var(--card)] border-[var(--border-width)] border-[var(--card-border)] shadow-[var(--shadow-brutal)] rounded-lg p-3">
                 <p className="text-label-light mb-1">{label}</p>
                 <p className="text-subsection-title text-[var(--accent)] nums">
                     ${payload[0].value.toLocaleString()}

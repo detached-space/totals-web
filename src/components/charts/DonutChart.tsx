@@ -16,7 +16,7 @@ const sizeConfig = {
 const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload?.length) {
         return (
-            <div className="glass-panel-sm p-2 shadow-lg">
+            <div className="bg-[var(--card)] border-[var(--border-width)] border-[var(--card-border)] shadow-[var(--shadow-brutal)] rounded-lg p-2">
                 <p className="text-caption font-medium text-[var(--foreground)]">{payload[0].name}</p>
                 <p className="text-body-title nums" style={{ color: payload[0].payload.color }}>
                     ${payload[0].value.toLocaleString()}

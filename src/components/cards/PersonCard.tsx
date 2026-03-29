@@ -14,8 +14,9 @@ export default function PersonCard({ person }: PersonCardProps) {
         <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            whileHover={{ y: -2 }}
-            className="glass-panel p-5 group cursor-pointer relative overflow-hidden"
+            whileHover={{ x: -2, y: -2, transition: { duration: 0.1 } }}
+            whileTap={{ x: 2, y: 2, transition: { duration: 0.05 } }}
+            className="glass-panel p-5 cursor-pointer relative overflow-hidden group"
         >
             <div className="flex items-center gap-4">
                 <Avatar
@@ -27,7 +28,7 @@ export default function PersonCard({ person }: PersonCardProps) {
                 />
                 <div className="flex-1 min-w-0">
                     <h4 className="text-body-lg text-[var(--foreground)] truncate">{person.name}</h4>
-                    <p className="text-body font-mono text-[var(--muted)]">{hidden ? '••••' : person.amount}</p>
+                    <p className="text-body font-mono text-[var(--muted)] font-bold">{hidden ? '----' : person.amount}</p>
                     {person.lastTransaction && (
                         <p className="text-caption mt-1 truncate">
                             {person.lastTransaction} · {person.date}
@@ -35,11 +36,10 @@ export default function PersonCard({ person }: PersonCardProps) {
                     )}
                 </div>
 
-                {/* Send button - appears on hover */}
                 <motion.button
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileHover={{ scale: 1.05 }}
-                    className="w-9 h-9 rounded-xl bg-[var(--accent)]/15 text-[var(--accent)] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                    className="w-9 h-9 rounded-lg bg-[var(--accent)] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-[var(--border-width)] border-[var(--card-border)] shadow-[2px_2px_0px_var(--card-border)]"
                 >
                     <Send size={16} />
                 </motion.button>

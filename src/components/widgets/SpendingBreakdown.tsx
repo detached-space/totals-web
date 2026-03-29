@@ -15,17 +15,17 @@ export default function SpendingBreakdown({ compact = false, className = '' }: S
     return (
         <motion.div
             variants={bentoItemVariants}
-            className={`glass-panel p-5 group ${className}`}
+            className={`glass-panel p-5 ${className}`}
         >
             <div className="flex items-center justify-between mb-3">
                 <p className="text-body-title text-[var(--foreground)]">Spending</p>
-                <span className="text-caption">This month</span>
+                <span className="brutal-tag bg-[var(--pop-yellow)] text-[#1A1A2E]">This month</span>
             </div>
 
             <DonutChart
                 data={spendingCategories}
                 centerLabel="Total"
-                centerValue={hidden ? '••••' : `$${formatCompact(totalSpending)}`}
+                centerValue={hidden ? '----' : `$${formatCompact(totalSpending)}`}
                 size={compact ? 'sm' : 'md'}
             />
 
@@ -34,10 +34,10 @@ export default function SpendingBreakdown({ compact = false, className = '' }: S
                     {spendingCategories.map((cat) => (
                         <div key={cat.name} className="flex items-center justify-between text-xs group">
                             <div className="flex items-center gap-2 text-[var(--muted)] group-hover:text-[var(--foreground)] transition-colors">
-                                <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: cat.color }} />
-                                <span className="truncate">{cat.name}</span>
+                                <div className="w-2 h-2 rounded-sm shrink-0 border border-[var(--card-border)]" style={{ background: cat.color }} />
+                                <span className="truncate font-bold">{cat.name}</span>
                             </div>
-                            <span className="font-medium text-[var(--foreground)]/80 ml-2 nums">{hidden ? '••••' : `$${cat.value}`}</span>
+                            <span className="font-black text-[var(--foreground)]/80 ml-2 nums">{hidden ? '----' : `$${cat.value}`}</span>
                         </div>
                     ))}
                 </div>

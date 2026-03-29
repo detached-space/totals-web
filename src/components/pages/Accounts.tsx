@@ -5,11 +5,10 @@ import GlassCard from "../shared/GlassCard";
 import TransactionItem from "../widgets/TransactionItem";
 import NetWorthChart from "../charts/NetWorthChart";
 import DonutChart from "../charts/DonutChart";
-import { accounts, transactions, spendingCategories } from "../../lib/data";
-import { getLogo, getBankName, formatCurrency } from "../../lib/helpers";
+import { accounts, transactions, spendingCategories, totalBalance } from "../../lib/data";
+import { bentoItemVariants } from "../layout/BentoGrid";
+import { getLogo, getBankName, formatCurrency, formatCompact } from "../../lib/helpers";
 import { usePrivacy } from "../shared/PrivacyProvider";
-import { BarChart, Bar, XAxis, ResponsiveContainer, Cell, Tooltip } from "recharts";
-
 const containerVariants = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.06 } },
@@ -20,7 +19,21 @@ const itemVariants = {
     visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] } },
 };
 
-const barColors = ['#a78bfa', '#60a5fa', '#fbbf24', '#EF4444', '#10B981'];
+const popColors = ['var(--accent)', 'var(--pop-blue)', 'var(--pop-purple)', 'var(--pop-orange)', 'var(--pop-pink)', 'var(--pop-yellow)'];
+
+const barItemVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: (i: number) => ({
+        opacity: 1,
+        x: 0,
+        transition: {
+            delay: i * 0.08,
+            type: 'spring' as const,
+            damping: 20,
+            stiffness: 300,
+        },
+    }),
+};
 
 export default function Accounts() {
     const { hidden } = usePrivacy();
@@ -30,12 +43,8 @@ export default function Accounts() {
     const [selectedId, setSelectedId] = useState(accounts[0].id);
     const selected = accounts.find(a => a.id === selectedId) || accounts[0];
     const accountTransactions = transactions.filter(t => t.bankId === selectedId).slice(0, 6);
-
-    const comparisonData = accounts.map(a => ({
-        name: getBankName(a.id),
-        balance: a.balance,
-        id: a.id,
-    }));
+    const sortedAccounts = [...accounts].sort((a, b) => b.balance - a.balance);
+    const maxBalance = sortedAccounts[0]?.balance || 1;
 
     return (
         <div ref={scrollRef} className="px-8 pb-8 max-w-[1600px] mx-auto">
@@ -101,10 +110,7 @@ export default function Accounts() {
                                     </div>
                                     <div>
                                         <p className="text-label-light">Status</p>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            <span className="w-2 h-2 rounded-full bg-[var(--success)]" />
-                                            <span className="text-sm text-[var(--success)] font-medium">Active</span>
-                                        </div>
+                                        <span className="brutal-tag bg-[var(--success)] text-[#1A1A2E] mt-1 inline-flex">Active</span>
                                     </div>
                                 </div>
                             </div>
@@ -142,37 +148,61 @@ export default function Accounts() {
                     </motion.div>
                 </div>
 
-                {/* All Accounts Comparison */}
-                <motion.div variants={itemVariants}>
+                {/* Account Breakdown */}
+                <motion.div variants={bentoItemVariants}>
                     <GlassCard padding="lg" hoverLift={false}>
-                        <h3 className="text-subsection-title text-[var(--foreground)] mb-4">Account Balances</h3>
-                        <div className="h-[200px]">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={comparisonData} layout="vertical" margin={{ left: 60 }}>
-                                    <XAxis type="number" hide />
-                                    <Tooltip
-                                        content={({ active, payload }: any) => {
-                                            if (active && payload?.length) {
-                                                return (
-                                                    <div className="glass-panel-sm p-2 shadow-lg">
-                                                        <p className="text-label-light">{payload[0].payload.name}</p>
-                                                        <p className="text-sm font-bold text-[var(--foreground)] nums">
-                                                            ${payload[0].value.toLocaleString()}
-                                                        </p>
-                                                    </div>
-                                                );
-                                            }
-                                            return null;
-                                        }}
-                                        cursor={{ fill: 'var(--card-border)', opacity: 0.3 }}
-                                    />
-                                    <Bar dataKey="balance" radius={[0, 6, 6, 0]} isAnimationActive animationDuration={800}>
-                                        {comparisonData.map((_, i) => (
-                                            <Cell key={i} fill={barColors[i % barColors.length]} />
-                                        ))}
-                                    </Bar>
-                                </BarChart>
-                            </ResponsiveContainer>
+                        <div className="flex items-center justify-between mb-5">
+                            <h3 className="text-subsection-title text-[var(--foreground)]">Account Breakdown</h3>
+                            <span className="brutal-tag bg-[var(--pop-purple)] text-[#1A1A2E]">
+                                {accounts.length} accounts
+                            </span>
+                        </div>
+                        <div className="space-y-4">
+                            {sortedAccounts.map((acc, i) => {
+                                const pct = (acc.balance / maxBalance) * 100;
+                                const share = Math.round((acc.balance / totalBalance) * 100);
+                                return (
+                                    <motion.div
+                                        key={acc.id}
+                                        custom={i}
+                                        variants={barItemVariants}
+                                        initial="hidden"
+                                        whileInView="visible"
+                                        viewport={{ once: true }}
+                                        className="flex items-center gap-3 cursor-pointer group"
+                                        onClick={() => setSelectedId(acc.id)}
+                                    >
+                                        <div className="w-8 h-8 rounded-md border-[var(--border-width)] border-[var(--card-border)] flex items-center justify-center bg-[var(--muted-fill)] shrink-0">
+                                            <img src={getLogo(acc.id)} alt="" className="w-4.5 h-4.5" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center justify-between mb-1">
+                                                <span className="text-xs font-bold text-[var(--foreground)] truncate group-hover:text-[var(--accent)] transition-colors">
+                                                    {getBankName(acc.id)}
+                                                </span>
+                                                <div className="flex items-center gap-2 shrink-0 ml-2">
+                                                    <span className="text-xs font-black text-[var(--foreground)] nums">
+                                                        {hidden ? '••••' : `$${formatCompact(acc.balance)}`}
+                                                    </span>
+                                                    <span className="text-[10px] font-bold text-[var(--muted)]">
+                                                        {share}%
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="h-2.5 rounded-sm bg-[var(--muted-fill)] border border-[var(--card-border)] overflow-hidden">
+                                                <motion.div
+                                                    className="h-full"
+                                                    style={{ backgroundColor: popColors[i % popColors.length] }}
+                                                    initial={{ width: 0 }}
+                                                    whileInView={{ width: `${pct}%` }}
+                                                    viewport={{ once: true }}
+                                                    transition={{ delay: 0.2 + i * 0.08, duration: 0.5, ease: "easeOut" }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                );
+                            })}
                         </div>
                     </GlassCard>
                 </motion.div>

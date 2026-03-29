@@ -93,6 +93,17 @@ export const monthlyComparison = [
     { month: "Mar", income: 13000, expenses: 7500 },
 ];
 
+// ─── Monthly Budget Tracking ─────────────────────────────────
+export const monthlyBudgetTracking = [
+    { month: "Sep", spent: 6200, budget: 7000 },
+    { month: "Oct", spent: 7100, budget: 7000 },
+    { month: "Nov", spent: 6500, budget: 7000 },
+    { month: "Dec", spent: 8200, budget: 7500 },
+    { month: "Jan", spent: 7000, budget: 7500 },
+    { month: "Feb", spent: 6800, budget: 7500 },
+    { month: "Mar", spent: 2424, budget: 2750 },
+];
+
 // ─── Activity Feed ───────────────────────────────────────────
 export const activityFeed: ActivityItem[] = [
     { id: 1, type: 'transaction', title: 'Salary Deposit', description: 'Received from Tech Corp Inc.', timestamp: '2025-03-28T09:00:00Z', amount: 2500, accountId: 1 },

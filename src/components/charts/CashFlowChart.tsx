@@ -22,7 +22,7 @@ const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload?.length) {
         const val = payload[0].value;
         return (
-            <div className="glass-panel-sm p-2 shadow-lg">
+            <div className="bg-[var(--card)] border-[var(--border-width)] border-[var(--card-border)] shadow-[var(--shadow-brutal)] rounded-lg p-2">
                 <p className="text-label-light">{payload[0].payload.name}</p>
                 <p className="text-body-title nums text-[var(--foreground)]">
                     {val >= 0 ? '+' : ''}${Math.abs(val).toLocaleString()}

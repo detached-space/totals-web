@@ -18,14 +18,14 @@ const statusVariant = {
 export default function TransactionItem({ transaction: t, compact = false }: TransactionItemProps) {
     const { hidden } = usePrivacy();
     const isCredit = t.type === 'CREDIT';
-    const amountDisplay = hidden ? '••••' : `$${Math.abs(t.amount).toLocaleString()}`;
+    const amountDisplay = hidden ? '----' : `$${Math.abs(t.amount).toLocaleString()}`;
 
     if (compact) {
         return (
             <div className="flex items-center justify-between py-2.5 group">
                 <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                        isCredit ? 'bg-[var(--success)]/15 text-[var(--success)]' : 'bg-[var(--foreground)]/5 text-[var(--muted)]'
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center border-[var(--border-width)] border-[var(--card-border)] ${
+                        isCredit ? 'bg-[var(--success)] text-[#1A1A2E]' : 'bg-[var(--muted-fill)] text-[var(--muted)]'
                     }`}>
                         {isCredit ? <ArrowDownLeft size={16} /> : <ArrowUpRight size={16} />}
                     </div>
@@ -36,7 +36,7 @@ export default function TransactionItem({ transaction: t, compact = false }: Tra
                         </p>
                     </div>
                 </div>
-                <span className={`text-sm font-semibold nums ${isCredit ? 'text-[var(--success)]' : 'text-[var(--foreground)]'}`}>
+                <span className={`text-sm font-black nums ${isCredit ? 'text-[var(--success)]' : 'text-[var(--foreground)]'}`}>
                     {isCredit ? '+' : '-'}{amountDisplay}
                 </span>
             </div>
@@ -44,10 +44,10 @@ export default function TransactionItem({ transaction: t, compact = false }: Tra
     }
 
     return (
-        <div className="flex items-center justify-between p-3.5 rounded-xl hover:bg-[var(--foreground)]/3 transition-colors group cursor-pointer">
+        <div className="flex items-center justify-between p-3.5 rounded-lg hover:bg-[var(--muted-fill)] transition-colors group cursor-pointer">
             <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                    isCredit ? 'bg-[var(--success)]/15 text-[var(--success)]' : 'bg-[var(--foreground)]/5 text-[var(--muted)]'
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center border-[var(--border-width)] border-[var(--card-border)] ${
+                    isCredit ? 'bg-[var(--success)] text-[#1A1A2E]' : 'bg-[var(--muted-fill)] text-[var(--muted)]'
                 }`}>
                     {isCredit ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
                 </div>
@@ -65,7 +65,7 @@ export default function TransactionItem({ transaction: t, compact = false }: Tra
                         {t.status}
                     </Badge>
                 )}
-                <span className={`font-semibold text-sm nums ${isCredit ? 'text-[var(--success)]' : 'text-[var(--foreground)]'}`}>
+                <span className={`font-black text-sm nums ${isCredit ? 'text-[var(--success)]' : 'text-[var(--foreground)]'}`}>
                     {isCredit ? '+' : '-'}{amountDisplay}
                 </span>
                 {t.transactionLink && (

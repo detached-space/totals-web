@@ -1,12 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════
-   TOTALS — Awwwards-Grade Design System
-   Premium glassmorphism • Physical motion • Chromatic depth
+   TOTALS — Neo-Brutalism Design System
+   Bold borders • Hard shadows • Raw typography • Flat color
    ═══════════════════════════════════════════════════════════════ */
 
 @import "tailwindcss";
-
-/* ─── SVG Noise Texture (inline, no network request) ─────── */
-/* Used as background-image on ::after pseudo-elements for grain */
 
 @theme {
   --color-background: var(--background);
@@ -34,102 +31,96 @@
 
 /* ─── Dark Mode (Default) ─────────────────────────────────── */
 :root {
-  --background: #161A26;
-  --foreground: #FFFFFF;
+  --background: #1A1A2E;
+  --foreground: #EAEAEA;
 
   /* Surface / card system */
-  --card: #1E2230;
-  --card-border: #34384A;
-  --card-border-highlight: #475569;
+  --card: #16213E;
+  --card-border: #0F3460;
+  --card-border-highlight: #533483;
 
-  /* Brand palette */
-  --accent: #4F46E5;
-  --accent-secondary: #6366F1;
-  --accent-glow: rgba(79, 70, 229, 0.45);
-  --accent-soft: rgba(79, 70, 229, 0.15);
-  --success: #10B981;
-  --danger: #EF4444;
-  --warning: #F59E0B;
+  /* Neo-brutal palette — bold, saturated, playful */
+  --accent: #E94560;
+  --accent-secondary: #533483;
+  --accent-glow: rgba(233, 69, 96, 0.3);
+  --accent-soft: rgba(233, 69, 96, 0.12);
+  --success: #00F5D4;
+  --danger: #FF6B6B;
+  --warning: #FEE440;
 
   /* Text hierarchy */
-  --muted: #94A3B8;
-  --muted-strong: #64748B;
+  --muted: #8892B0;
+  --muted-strong: #6B7394;
 
-  /* Slate tones */
-  --slate-700: #334155;
-  --slate-600: #475569;
-  --slate-500: #64748B;
-  --slate-400: #94A3B8;
-  --muted-fill: #2A3040;
+  /* Tones */
+  --slate-700: #2D3561;
+  --slate-600: #3D4A7A;
+  --slate-500: #6B7394;
+  --slate-400: #8892B0;
+  --muted-fill: #1A1F3D;
 
-  /* Shadows */
-  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255,255,255,0.04) inset;
-  --shadow-glow: 0 0 40px var(--accent-glow);
-  --shadow-elevated: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255,255,255,0.04) inset;
+  /* Neo-brutal hard shadows — no blur, solid offset */
+  --shadow-brutal: 4px 4px 0px #0F3460;
+  --shadow-brutal-lg: 6px 6px 0px #0F3460;
+  --shadow-brutal-xl: 8px 8px 0px #0F3460;
+  --shadow-brutal-accent: 4px 4px 0px var(--accent);
+  --shadow-glass: 4px 4px 0px #0F3460;
+  --shadow-glow: 4px 4px 0px var(--accent);
+  --shadow-elevated: 6px 6px 0px #0F3460;
 
-  /* Layered glass depth — background → mid → foreground */
-  --glass-bg-0: rgba(30, 34, 48, 0.5);
-  --glass-bg-sm: rgba(30, 34, 48, 0.6);
-  --glass-bg-md: rgba(30, 34, 48, 0.7);
-  --glass-bg-lg: rgba(30, 34, 48, 0.8);
-  --glass-bg-xl: rgba(30, 34, 48, 0.9);
+  /* Pop colors for tags/badges */
+  --pop-yellow: #FEE440;
+  --pop-blue: #00BBF9;
+  --pop-pink: #F15BB5;
+  --pop-green: #00F5D4;
+  --pop-orange: #F77F00;
+  --pop-purple: #9B5DE5;
 
-  /* Mesh background gradients */
-  --mesh-1: rgba(79, 70, 229, 0.10);
-  --mesh-2: rgba(99, 102, 241, 0.07);
-  --mesh-3: rgba(59, 130, 246, 0.05);
-
-  --noise-opacity: 0.025;
+  --border-width: 2px;
 }
 
 /* ─── Light Mode ──────────────────────────────────────────── */
 .light {
-  --background: #F8FAFC;
-  --foreground: #0F172A;
+  --background: #F5F0E8;
+  --foreground: #1A1A2E;
 
-  /* Surface / card system */
   --card: #FFFFFF;
-  --card-border: #E2E8F0;
-  --card-border-highlight: #CBD5E1;
+  --card-border: #1A1A2E;
+  --card-border-highlight: #1A1A2E;
 
-  /* Brand palette */
-  --accent: #6366F1;
-  --accent-secondary: #3B82F6;
-  --accent-glow: rgba(99, 102, 241, 0.2);
-  --accent-soft: rgba(99, 102, 241, 0.08);
-  --success: #10B981;
-  --danger: #EF4444;
-  --warning: #F59E0B;
+  --accent: #E94560;
+  --accent-secondary: #533483;
+  --accent-glow: rgba(233, 69, 96, 0.15);
+  --accent-soft: rgba(233, 69, 96, 0.08);
+  --success: #00A884;
+  --danger: #E94560;
+  --warning: #F77F00;
 
-  /* Text hierarchy */
-  --muted: #64748B;
-  --muted-strong: #94A3B8;
+  --muted: #6B7394;
+  --muted-strong: #8892B0;
 
-  /* Slate tones */
-  --slate-700: #334155;
-  --slate-600: #475569;
-  --slate-500: #64748B;
-  --slate-400: #94A3B8;
-  --muted-fill: #F1F5F9;
+  --slate-700: #2D3561;
+  --slate-600: #3D4A7A;
+  --slate-500: #6B7394;
+  --slate-400: #8892B0;
+  --muted-fill: #EDE8DF;
 
-  /* Shadows */
-  --shadow-glass: 0 1px 3px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0,0,0,0.03);
-  --shadow-glow: 0 0 30px var(--accent-glow);
-  --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0,0,0,0.03);
+  --shadow-brutal: 4px 4px 0px #1A1A2E;
+  --shadow-brutal-lg: 6px 6px 0px #1A1A2E;
+  --shadow-brutal-xl: 8px 8px 0px #1A1A2E;
+  --shadow-brutal-accent: 4px 4px 0px var(--accent);
+  --shadow-glass: 4px 4px 0px #1A1A2E;
+  --shadow-glow: 4px 4px 0px var(--accent);
+  --shadow-elevated: 6px 6px 0px #1A1A2E;
 
-  /* Glass — in light mode, use solid whites with subtle transparency */
-  --glass-bg-0: rgba(255, 255, 255, 0.6);
-  --glass-bg-sm: rgba(255, 255, 255, 0.7);
-  --glass-bg-md: rgba(255, 255, 255, 0.8);
-  --glass-bg-lg: rgba(255, 255, 255, 0.9);
-  --glass-bg-xl: rgba(255, 255, 255, 0.95);
+  --pop-yellow: #FEE440;
+  --pop-blue: #00BBF9;
+  --pop-pink: #F15BB5;
+  --pop-green: #00A884;
+  --pop-orange: #F77F00;
+  --pop-purple: #9B5DE5;
 
-  /* Mesh background gradients */
-  --mesh-1: rgba(99, 102, 241, 0.06);
-  --mesh-2: rgba(59, 130, 246, 0.05);
-  --mesh-3: rgba(168, 85, 247, 0.03);
-
-  --noise-opacity: 0.015;
+  --border-width: 2.5px;
 }
 
 /* ─── Global Reset + Font ────────────────────────────────── */
@@ -144,152 +135,127 @@ body {
   padding: 0;
   min-height: 100vh;
   overflow-x: hidden;
-  transition: color 0.4s ease, background-color 0.4s ease;
+  transition: color 0.2s ease, background-color 0.2s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Noise Texture Overlay ──────────────────────────────── */
+/* ─── Noise Overlay — subtle grain for texture ────────────── */
 .noise-overlay::after {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  opacity: var(--noise-opacity);
+  opacity: 0.04;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 256px 256px;
   mix-blend-mode: overlay;
 }
 
-/* ─── Gradient Mesh Background ───────────────────────────── */
+/* ─── Mesh Gradient — toned down for brutalism ────────────── */
 .mesh-gradient {
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(ellipse 80% 50% at 20% 20%, var(--mesh-1) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 60% at 80% 10%, var(--mesh-2) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 50% at 50% 90%, var(--mesh-3) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 40% at 70% 50%, rgba(236, 72, 153, 0.04) 0%, transparent 50%),
-    var(--background);
-  transition: background 0.8s ease;
+  background: var(--background);
 }
 
-/* Slow drift animation for mesh blobs */
-.mesh-gradient::before,
-.mesh-gradient::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(100px);
-  animation: mesh-drift 20s ease-in-out infinite;
-}
-.mesh-gradient::before {
-  width: 40vw;
-  height: 40vw;
-  top: -10%;
-  left: -5%;
-  background: var(--mesh-1);
-  animation-delay: -5s;
-}
-.mesh-gradient::after {
-  width: 35vw;
-  height: 35vw;
-  bottom: -10%;
-  right: -5%;
-  background: var(--mesh-2);
-  animation-delay: -12s;
-}
-
-@keyframes mesh-drift {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25%      { transform: translate(5vw, 3vh) scale(1.05); }
-  50%      { transform: translate(-3vw, 5vh) scale(0.95); }
-  75%      { transform: translate(4vw, -2vh) scale(1.02); }
-}
-
-/* ─── Glass Panels — 3-tier depth ────────────────────────── */
+/* ─── Brutal Panels — the core building block ────────────── */
 .glass-panel {
-  background: var(--glass-bg-md);
-  backdrop-filter: blur(24px) saturate(1.4);
-  -webkit-backdrop-filter: blur(24px) saturate(1.4);
-  border: 1px solid var(--card-border);
-  border-top-color: var(--card-border-highlight);
-  box-shadow: var(--shadow-glass);
-  border-radius: var(--radius-xl);
-  transition: border-color 0.3s ease, box-shadow 0.4s ease;
+  background: var(--card);
+  border: var(--border-width) solid var(--card-border);
+  box-shadow: var(--shadow-brutal);
+  border-radius: var(--radius-lg);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
   position: relative;
-  overflow: hidden;
 }
 
-/* Subtle inner grain on glass */
-.glass-panel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0.02;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-  background-size: 128px 128px;
-  mix-blend-mode: overlay;
+.glass-panel:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--card-border);
 }
 
 .glass-panel-sm {
-  background: var(--glass-bg-sm);
-  backdrop-filter: blur(16px) saturate(1.3);
-  -webkit-backdrop-filter: blur(16px) saturate(1.3);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-lg);
+  background: var(--card);
+  border: var(--border-width) solid var(--card-border);
+  box-shadow: 3px 3px 0px var(--card-border);
+  border-radius: var(--radius-md);
   position: relative;
 }
 
 .glass-panel-lg {
-  background: var(--glass-bg-lg);
-  backdrop-filter: blur(40px) saturate(1.5);
-  -webkit-backdrop-filter: blur(40px) saturate(1.5);
-  border: 1px solid var(--card-border);
-  border-top-color: var(--card-border-highlight);
-  box-shadow: var(--shadow-elevated);
-  border-radius: var(--radius-2xl);
+  background: var(--card);
+  border: var(--border-width) solid var(--card-border);
+  box-shadow: var(--shadow-brutal-lg);
+  border-radius: var(--radius-xl);
   position: relative;
-  overflow: hidden;
 }
 
-.glass-panel-lg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0.015;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-  background-size: 128px 128px;
-  mix-blend-mode: overlay;
-}
-
-/* Chromatic glow — cards cast colored light */
-.glass-panel:hover,
 .glass-panel-lg:hover {
-  border-color: var(--card-border-highlight);
-  box-shadow: var(--shadow-elevated), 0 0 80px -20px var(--accent-glow);
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px var(--card-border);
 }
 
 .glass-button {
-  background: var(--glass-bg-sm);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--card-border);
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: var(--card);
+  border: var(--border-width) solid var(--card-border);
+  box-shadow: 3px 3px 0px var(--card-border);
+  transition: all 0.1s ease;
   cursor: pointer;
 }
 
 .glass-button:hover {
-  background: var(--glass-bg-md);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px var(--card-border);
+}
+
+.glass-button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--card-border);
+}
+
+/* ─── Brutal Accent Card — colored background variant ────── */
+.brutal-card-accent {
+  background: var(--accent);
+  color: white;
+  border: var(--border-width) solid var(--card-border);
+  box-shadow: var(--shadow-brutal);
+  border-radius: var(--radius-lg);
+}
+
+.brutal-card-yellow {
+  background: var(--pop-yellow);
+  color: #1A1A2E;
+  border: var(--border-width) solid var(--card-border);
+  box-shadow: var(--shadow-brutal);
+  border-radius: var(--radius-lg);
+}
+
+.brutal-card-blue {
+  background: var(--pop-blue);
+  color: #1A1A2E;
+  border: var(--border-width) solid var(--card-border);
+  box-shadow: var(--shadow-brutal);
+  border-radius: var(--radius-lg);
+}
+
+.brutal-card-green {
+  background: var(--pop-green);
+  color: #1A1A2E;
+  border: var(--border-width) solid var(--card-border);
+  box-shadow: var(--shadow-brutal);
+  border-radius: var(--radius-lg);
+}
+
+.brutal-card-pink {
+  background: var(--pop-pink);
+  color: white;
+  border: var(--border-width) solid var(--card-border);
+  box-shadow: var(--shadow-brutal);
+  border-radius: var(--radius-lg);
 }
 
 /* ─── Bento Grid ──────────────────────────────────────────── */
@@ -327,84 +293,81 @@ body {
   }
 }
 
-/* ─── Typography — Wise/Inter Scale ──────────────────────── */
+/* ─── Typography — Bold & Raw ────────────────────────────── */
 
-/* Hero balance — the breath-taking number */
 .text-hero {
-  font-size: clamp(3rem, 5vw, 5rem);  /* 48-80px responsive */
+  font-size: clamp(3rem, 5vw, 5rem);
   line-height: 1;
-  font-weight: 200;
+  font-weight: 900;
   letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
 }
 
 .text-hero-bold {
-  font-weight: 700;
+  font-weight: 900;
 }
 
-/* Product hero — use sparingly for splash / hero numbers */
 .text-display-xl {
   font-size: 6rem;
   line-height: 1;
-  font-weight: 700;
+  font-weight: 900;
   letter-spacing: -0.03em;
   text-transform: uppercase;
-  font-feature-settings: "ss01", "cv11";
 }
 
 .text-display-lg {
   font-size: 4rem;
   line-height: 1.05;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.025em;
 }
 
 .text-display-md {
   font-size: 2.5rem;
   line-height: 1.1;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.02em;
 }
 
 .text-display-sm {
   font-size: 1.875rem;
   line-height: 1.15;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.025em;
 }
 
 .text-screen-title {
   font-size: 1.625rem;
   line-height: 1.2;
-  font-weight: 600;
+  font-weight: 800;
   letter-spacing: -0.015em;
 }
 
 .text-section-title {
   font-size: 1.375rem;
   line-height: 1.25;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.015em;
 }
 
 .text-subsection-title {
   font-size: 1.125rem;
   line-height: 1.3;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.01em;
 }
 
 .text-body-title {
   font-size: 0.875rem;
   line-height: 1.5;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.01em;
 }
 
 .text-body-lg {
   font-size: 1rem;
   line-height: 1.5;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.005em;
 }
 
@@ -412,22 +375,21 @@ body {
   font-size: 0.875rem;
   line-height: 1.6;
   font-weight: 400;
-  letter-spacing: 0em;
 }
 
 .text-caption {
   font-size: 0.75rem;
   line-height: 1.5;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--muted);
 }
 
-/* Ultra-light label — for mixed-weight pairings */
+/* Label — uppercase, bold, small */
 .text-label-light {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   line-height: 1.5;
-  font-weight: 300;
-  letter-spacing: 0.06em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -435,47 +397,49 @@ body {
 .text-overline {
   font-size: 0.6875rem;
   line-height: 1.5;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-/* Link styles */
+/* Link styles — underline always visible in brutalism */
 .text-link {
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--accent);
   text-decoration: underline;
-  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
   text-underline-offset: 3px;
-  transition: text-decoration-color 0.2s ease, color 0.2s ease;
+  transition: color 0.1s ease;
 }
 .text-link:hover {
-  text-decoration-color: var(--accent);
+  color: var(--foreground);
 }
 
 .text-link-subtle {
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--accent);
-  transition: color 0.2s ease;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+  transition: color 0.1s ease;
 }
 .text-link-subtle:hover {
   color: var(--foreground);
 }
 
-/* Tabular nums utility (already global, but force on specific elements) */
 .nums {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
 }
 
-/* ─── Animations ──────────────────────────────────────────── */
+/* ─── Animations — Snappy & Playful ──────────────────────── */
 
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-6px); }
 }
 
 @keyframes shimmer {
@@ -484,13 +448,13 @@ body {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 @keyframes breathe {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 0.4; }
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
 }
 
 @keyframes sonar-ping {
@@ -503,7 +467,6 @@ body {
   100% { transform: scale(2.2); opacity: 0; }
 }
 
-/* Slot machine number scramble */
 @keyframes scramble-digit {
   0%   { transform: translateY(0); }
   10%  { transform: translateY(-100%); }
@@ -517,57 +480,49 @@ body {
   100% { transform: translateY(0); }
 }
 
+/* Brutal bounce */
+@keyframes brutal-bounce {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-2px, -2px); }
+}
+
 .animate-float { animation: float 6s ease-in-out infinite; }
 .animate-shimmer { animation: shimmer 2s ease-in-out infinite; }
 .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
 .animate-breathe { animation: breathe 4s ease-in-out infinite; }
 .animate-radar { animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
 
-/* ─── Scrollbar ───────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
+/* ─── Scrollbar — Thick & Visible ─────────────────────────── */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--background); }
 ::-webkit-scrollbar-thumb {
-  background: rgba(150, 150, 150, 0.15);
-  border-radius: 3px;
+  background: var(--card-border);
+  border-radius: 0;
+  border: 1px solid var(--card-border);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(150, 150, 150, 0.3);
+  background: var(--accent);
 }
 
-.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(150, 150, 150, 0.1);
-  border-radius: 2px;
+  background: var(--card-border);
+  border-radius: 0;
 }
 
 /* ─── Utility ─────────────────────────────────────────────── */
-.glow-accent { box-shadow: 0 0 40px var(--accent-glow); }
-.glow-blue { box-shadow: 0 0 30px rgba(59, 130, 246, 0.3); }
-.glow-purple { box-shadow: 0 0 30px rgba(168, 85, 247, 0.3); }
-.glow-green { box-shadow: 0 0 30px rgba(34, 197, 94, 0.3); }
+.glow-accent { box-shadow: var(--shadow-brutal-accent); }
+.glow-blue { box-shadow: 4px 4px 0px var(--pop-blue); }
+.glow-purple { box-shadow: 4px 4px 0px var(--pop-purple); }
+.glow-green { box-shadow: 4px 4px 0px var(--pop-green); }
 
 .gradient-border {
   position: relative;
 }
-.gradient-border::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
 
-/* Crosshair cursor for chart areas */
 .cursor-crosshair { cursor: crosshair; }
 
-/* ─── Reduced Motion ─────────────────────────────────────── */
-/* ─── Scrollbar Hide Utility ──────────────────────────────── */
+/* ─── Scrollbar Hide ──────────────────────────────────────── */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -576,14 +531,25 @@ body {
   display: none;
 }
 
+/* ─── Brutal Tag — colored pills with borders ─────────────── */
+.brutal-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.625rem;
+  border: var(--border-width) solid var(--card-border);
+  border-radius: var(--radius-full);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ─── Reduced Motion ──────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-  .mesh-gradient::before,
-  .mesh-gradient::after {
-    animation: none;
   }
 }

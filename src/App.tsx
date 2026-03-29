@@ -36,9 +36,7 @@ export default function App() {
         <ThemeProvider>
             <PrivacyProvider>
             <Router>
-                <div className="noise-overlay flex h-screen w-screen overflow-hidden">
-                    {/* Animated gradient mesh background */}
-                    <div className="mesh-gradient" />
+                <div className="noise-overlay flex h-screen w-screen overflow-hidden bg-[var(--background)]">
 
                     <Sidebar />
 

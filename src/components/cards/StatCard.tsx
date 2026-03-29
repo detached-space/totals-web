@@ -31,39 +31,57 @@ export default function StatCard({
     return (
         <motion.div
             variants={bentoItemVariants}
-            whileHover={{ y: -4, transition: { type: 'spring', damping: 20, stiffness: 300 } }}
-            whileTap={{ scale: 0.97, transition: { type: 'spring', damping: 15, stiffness: 400 } }}
-            className={`glass-panel p-6 flex flex-col gap-4 group cursor-pointer ${className}`}
-            style={{ '--stat-color': color } as React.CSSProperties}
+            whileHover={{
+                x: -3,
+                y: -3,
+                boxShadow: '6px 6px 0px var(--card-border)',
+                transition: { duration: 0.1 },
+            }}
+            whileTap={{
+                x: 2,
+                y: 2,
+                boxShadow: '0px 0px 0px var(--card-border)',
+                transition: { duration: 0.05 },
+            }}
+            className={`glass-panel p-5 flex items-center gap-4 cursor-pointer ${className}`}
         >
-            <div className="flex items-center justify-between">
-                <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center transition-shadow duration-500 group-hover:shadow-[0_0_30px_-5px_var(--stat-color)]"
-                    style={{ backgroundColor: `${color}15`, color }}
-                >
-                    <Icon size={20} />
-                </div>
+            {/* Icon with bounce-in */}
+            <motion.div
+                initial={{ scale: 0, rotate: -45 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ delay: 0.2, type: 'spring' as const, damping: 10, stiffness: 250 }}
+                className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0 border-[var(--border-width)] border-[var(--card-border)] shadow-[3px_3px_0px_var(--card-border)]"
+                style={{ backgroundColor: color, color: '#1A1A2E' }}
+            >
+                <Icon size={22} />
+            </motion.div>
 
-                {trend !== undefined && (
-                    <div className={`flex items-center gap-1 text-xs font-medium ${
-                        isPositive ? 'text-[var(--success)]' : 'text-[var(--danger)]'
-                    }`}>
-                        {isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                        {isPositive ? '+' : ''}{trend}%
-                    </div>
-                )}
-            </div>
-
-            <div>
-                <p className="text-label-light mb-1.5">{title}</p>
+            <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)] mb-0.5">{title}</p>
                 <AnimatedCounter
                     value={value}
                     prefix={prefix}
                     suffix={suffix}
                     decimals={decimals}
-                    className="text-section-title nums text-[var(--foreground)]"
+                    className="text-xl font-black nums text-[var(--foreground)]"
                 />
             </div>
+
+            {trend !== undefined && (
+                <motion.div
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className={`flex items-center gap-1 text-[11px] font-black px-2 py-1 rounded-md border-[var(--border-width)] border-[var(--card-border)] shrink-0 ${
+                        isPositive
+                            ? 'bg-[var(--success)] text-[#1A1A2E]'
+                            : 'bg-[var(--danger)] text-white'
+                    }`}
+                >
+                    {isPositive ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
+                    {isPositive ? '+' : ''}{trend}%
+                </motion.div>
+            )}
         </motion.div>
     );
 }

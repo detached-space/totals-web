@@ -21,14 +21,14 @@ export default function Avatar({
     src,
     size = 'md',
     ring = false,
-    ringColor = 'ring-blue-500/50',
+    ringColor = 'ring-[var(--accent)]',
     online,
     className = '',
-    bg = 'bg-[var(--foreground)]/10 text-[var(--foreground)]',
+    bg = 'bg-[var(--muted-fill)] text-[var(--foreground)]',
 }: AvatarProps) {
     return (
         <div className={`relative inline-flex ${className}`}>
-            <div className={`${sizeMap[size]} rounded-full ${ring ? `ring-2 ${ringColor}` : ''} overflow-hidden flex items-center justify-center font-bold ${bg}`}>
+            <div className={`${sizeMap[size]} rounded-lg ${ring ? `ring-2 ${ringColor}` : ''} overflow-hidden flex items-center justify-center font-black border-[var(--border-width)] border-[var(--card-border)] ${bg}`}>
                 {src ? (
                     <img src={src} alt="" className="w-full h-full object-cover" />
                 ) : (
@@ -36,7 +36,7 @@ export default function Avatar({
                 )}
             </div>
             {online !== undefined && (
-                <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-[var(--background)] ${online ? 'bg-[var(--success)]' : 'bg-gray-500'}`} />
+                <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-sm border-2 border-[var(--card)] ${online ? 'bg-[var(--success)]' : 'bg-gray-500'}`} />
             )}
         </div>
     );

@@ -19,22 +19,20 @@ export default function Topbar() {
     const page = pageTitles[pathname] || { title: 'Overview', subtitle: '' };
 
     return (
-        <header className="sticky top-0 z-40 px-8 py-5">
+        <header className="sticky top-0 z-40 px-8 py-5 bg-[var(--background)] border-b-[var(--border-width)] border-b-[var(--card-border)]">
             <div className="flex justify-between items-center">
-                {/* Left: Title */}
                 <div>
                     <h1 className="text-screen-title text-[var(--foreground)]">{page.title}</h1>
                     <p className="text-caption mt-0.5">{page.subtitle}</p>
                 </div>
 
-                {/* Right: Privacy Toggle */}
                 <motion.button
                     onClick={toggle}
-                    whileTap={{ scale: 0.9 }}
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors cursor-pointer border ${
+                    whileTap={{ scale: 0.95 }}
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center cursor-pointer border-[var(--border-width)] transition-all ${
                         hidden
-                            ? 'bg-[var(--accent)]/15 border-[var(--accent)]/25 text-[var(--accent)]'
-                            : 'bg-[var(--foreground)]/5 border-[var(--card-border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/10'
+                            ? 'bg-[var(--accent)] border-[var(--card-border)] text-white shadow-[3px_3px_0px_var(--card-border)]'
+                            : 'bg-[var(--card)] border-[var(--card-border)] text-[var(--muted)] hover:text-[var(--foreground)] shadow-[3px_3px_0px_var(--card-border)]'
                     }`}
                     title={hidden ? 'Show amounts' : 'Hide amounts'}
                 >
@@ -45,7 +43,7 @@ export default function Topbar() {
                                 initial={{ scale: 0.5, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 exit={{ scale: 0.5, opacity: 0 }}
-                                transition={{ duration: 0.15 }}
+                                transition={{ duration: 0.1 }}
                             >
                                 <EyeOff size={18} />
                             </motion.div>
@@ -55,7 +53,7 @@ export default function Topbar() {
                                 initial={{ scale: 0.5, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 exit={{ scale: 0.5, opacity: 0 }}
-                                transition={{ duration: 0.15 }}
+                                transition={{ duration: 0.1 }}
                             >
                                 <Eye size={18} />
                             </motion.div>
