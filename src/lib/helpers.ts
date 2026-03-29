@@ -87,6 +87,11 @@ export function getRelativeTime(dateStr: string): string {
     return formatDate(dateStr);
 }
 
+export function maskAmount(value: string, hidden: boolean): string {
+    if (!hidden) return value;
+    return value.replace(/[\d,.]+/g, '••••');
+}
+
 export function getDateGroup(dateStr: string): string {
     const date = new Date(dateStr);
     const today = new Date();

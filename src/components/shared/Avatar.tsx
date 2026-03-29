@@ -36,7 +36,7 @@ export default function Avatar({
                 )}
             </div>
             {online !== undefined && (
-                <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-[var(--background)] ${online ? 'bg-emerald-400' : 'bg-gray-500'}`} />
+                <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-[var(--background)] ${online ? 'bg-[var(--success)]' : 'bg-gray-500'}`} />
             )}
         </div>
     );

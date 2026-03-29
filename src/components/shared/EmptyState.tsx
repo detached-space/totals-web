@@ -14,7 +14,7 @@ export default function EmptyState({
     return (
         <div className="flex flex-col items-center justify-center py-16 text-[var(--muted)]">
             <div className="mb-4 opacity-40">{icon}</div>
-            <h3 className="text-lg font-semibold mb-1 text-[var(--foreground)]/60">{title}</h3>
+            <h3 className="text-subsection-title mb-1 text-[var(--foreground)]/60">{title}</h3>
             <p className="text-sm">{message}</p>
         </div>
     );

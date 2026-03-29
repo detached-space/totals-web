@@ -50,13 +50,13 @@ export default function Sidebar() {
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] }}
             className="h-screen flex flex-col relative z-50 shrink-0"
         >
-            {/* Glass Background */}
-            <div className="absolute inset-0 bg-[var(--glass-bg-lg)] backdrop-blur-2xl border-r border-[var(--card-border)]" />
+            {/* Glass Background — intensifies when content scrolls behind */}
+            <div className="absolute inset-0 bg-[var(--glass-bg-lg)] backdrop-blur-2xl border-r border-[var(--card-border)] transition-all duration-500" />
 
             <div className="relative z-10 flex flex-col h-full">
                 {/* Profile Section */}
                 <div className="p-4 flex items-center gap-3 border-b border-[var(--card-border)]">
-                    <Avatar initials="BS" size="md" bg="bg-gradient-to-br from-blue-500 to-purple-600 text-white" />
+                    <Avatar initials="BS" size="md" bg="bg-gradient-to-br from-indigo-500 to-purple-600 text-white" />
                     <AnimatePresence>
                         {!collapsed && (
                             <motion.div
@@ -66,8 +66,8 @@ export default function Sidebar() {
                                 transition={{ duration: 0.2 }}
                                 className="overflow-hidden"
                             >
-                                <p className="font-semibold text-sm text-[var(--foreground)] whitespace-nowrap">Brook Solomon</p>
-                                <p className="text-xs text-[var(--muted)] whitespace-nowrap">Personal</p>
+                                <p className="text-body-lg text-[var(--foreground)] whitespace-nowrap">Brook Solomon</p>
+                                <p className="text-caption whitespace-nowrap">Personal</p>
                             </motion.div>
                         )}
                     </AnimatePresence>
@@ -105,8 +105,8 @@ export default function Sidebar() {
                                         {active && (
                                             <motion.div
                                                 layoutId="sidebar-active"
-                                                className="absolute inset-0 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/20"
-                                                transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
+                                                className="absolute inset-0 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 shadow-[0_0_20px_-5px_var(--accent-glow)]"
+                                                transition={{ type: 'spring', duration: 0.5, bounce: 0.2 }}
                                             />
                                         )}
 
@@ -121,14 +121,14 @@ export default function Sidebar() {
                                                     animate={{ opacity: 1, x: 0 }}
                                                     exit={{ opacity: 0, x: -8 }}
                                                     transition={{ duration: 0.15 }}
-                                                    className="relative z-10 text-sm font-medium whitespace-nowrap"
+                                                    className="relative z-10 text-body-title whitespace-nowrap"
                                                 >
                                                     {item.label}
                                                 </motion.span>
                                             )}
                                         </AnimatePresence>
 
-                                        {/* Badge */}
+                                        {/* Badge with radar ping */}
                                         {'badge' in item && item.badge && (
                                             <AnimatePresence>
                                                 {!collapsed ? (
@@ -141,7 +141,10 @@ export default function Sidebar() {
                                                         {item.badge}
                                                     </motion.span>
                                                 ) : (
-                                                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[var(--accent)] rounded-full" />
+                                                    <span className="absolute top-1.5 right-1.5 flex items-center justify-center">
+                                                        <span className="absolute w-2 h-2 bg-[var(--accent)] rounded-full animate-radar opacity-50" />
+                                                        <span className="relative w-2 h-2 bg-[var(--accent)] rounded-full" />
+                                                    </span>
                                                 )}
                                             </AnimatePresence>
                                         )}
@@ -156,7 +159,7 @@ export default function Sidebar() {
                 <div className="p-3 border-t border-[var(--card-border)] flex flex-col gap-1">
                     <button
                         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[var(--muted)] hover:text-[var(--foreground)] transition-colors cursor-pointer ${collapsed ? 'justify-center' : ''}`}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5 transition-all cursor-pointer ${collapsed ? 'justify-center' : ''}`}
                     >
                         {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                         <AnimatePresence>
@@ -165,7 +168,7 @@ export default function Sidebar() {
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
-                                    className="text-sm font-medium"
+                                    className="text-body-title"
                                 >
                                     {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
                                 </motion.span>
@@ -175,7 +178,7 @@ export default function Sidebar() {
 
                     <button
                         onClick={() => setCollapsed(!collapsed)}
-                        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5 transition-colors cursor-pointer ${collapsed ? 'justify-center' : ''}`}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5 transition-all cursor-pointer ${collapsed ? 'justify-center' : ''}`}
                     >
                         {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
                         <AnimatePresence>
@@ -184,7 +187,7 @@ export default function Sidebar() {
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
-                                    className="text-sm font-medium"
+                                    className="text-body-title"
                                 >
                                     Collapse
                                 </motion.span>

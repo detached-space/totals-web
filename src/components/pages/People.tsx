@@ -7,6 +7,7 @@ import Tabs from "../shared/Tabs";
 import SearchFilter from "../widgets/SearchFilter";
 import { topPeople, allPeople } from "../../lib/data";
 import { bentoItemVariants } from "../layout/BentoGrid";
+import { usePrivacy } from "../shared/PrivacyProvider";
 
 const containerVariants = {
     hidden: {},
@@ -20,6 +21,7 @@ const tabs = [
 ];
 
 export default function People() {
+    const { hidden } = usePrivacy();
     const [search, setSearch] = useState('');
     const [activeTab, setActiveTab] = useState('all');
 
@@ -47,7 +49,7 @@ export default function People() {
                 {/* Top 3 Podium */}
                 <motion.div variants={bentoItemVariants}>
                     <GlassCard padding="lg" hoverLift={false}>
-                        <h3 className="text-sm font-semibold text-[var(--muted)] text-center mb-6">Top Interactions</h3>
+                        <h3 className="text-body-title text-[var(--muted)] text-center mb-6">Top Interactions</h3>
 
                         <div className="flex items-end justify-center gap-6 md:gap-10 pb-4">
                             {/* 2nd Place */}
@@ -60,8 +62,8 @@ export default function People() {
                                     bg={topPeople[1].bg}
                                 />
                                 <div className="text-center">
-                                    <p className="font-semibold text-sm">{topPeople[1].name}</p>
-                                    <p className="text-xs text-[var(--muted)] font-mono">{topPeople[1].amount}</p>
+                                    <p className="text-body-title">{topPeople[1].name}</p>
+                                    <p className="text-xs text-[var(--muted)] font-mono nums">{hidden ? '••••' : topPeople[1].amount}</p>
                                 </div>
                                 <div className="w-16 h-20 bg-[var(--foreground)]/3 rounded-t-xl border-t border-x border-[var(--card-border)] flex items-start justify-center pt-2">
                                     <span className="text-xs font-bold text-[var(--muted)]">2</span>
@@ -83,8 +85,8 @@ export default function People() {
                                     </div>
                                 </div>
                                 <div className="text-center mt-2">
-                                    <p className="font-bold text-lg">{topPeople[0].name}</p>
-                                    <p className="text-xs text-[var(--muted)] font-mono">{topPeople[0].amount}</p>
+                                    <p className="text-subsection-title">{topPeople[0].name}</p>
+                                    <p className="text-xs text-[var(--muted)] font-mono nums">{hidden ? '••••' : topPeople[0].amount}</p>
                                 </div>
                                 <div className="w-20 h-28 bg-gradient-to-b from-yellow-400/10 to-[var(--card)] rounded-t-xl border-t border-x border-yellow-400/20 flex items-start justify-center pt-2">
                                     <span className="text-xs font-bold text-yellow-400">1</span>
@@ -101,8 +103,8 @@ export default function People() {
                                     bg={topPeople[2].bg}
                                 />
                                 <div className="text-center">
-                                    <p className="font-semibold text-sm">{topPeople[2].name}</p>
-                                    <p className="text-xs text-[var(--muted)] font-mono">{topPeople[2].amount}</p>
+                                    <p className="text-body-title">{topPeople[2].name}</p>
+                                    <p className="text-xs text-[var(--muted)] font-mono nums">{hidden ? '••••' : topPeople[2].amount}</p>
                                 </div>
                                 <div className="w-16 h-14 bg-[var(--foreground)]/3 rounded-t-xl border-t border-x border-[var(--card-border)] flex items-start justify-center pt-2">
                                     <span className="text-xs font-bold text-[var(--muted)]">3</span>
@@ -134,7 +136,7 @@ export default function People() {
 
                 {filteredPeople.length === 0 && (
                     <motion.div variants={bentoItemVariants}>
-                        <p className="text-center text-sm text-[var(--muted)] py-12">No contacts found</p>
+                        <p className="text-body text-[var(--muted)] text-center py-12">No contacts found</p>
                     </motion.div>
                 )}
             </motion.div>

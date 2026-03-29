@@ -74,8 +74,8 @@ export default function Transactions() {
 
                 {/* Analytics Row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <StatCard title="Total Income" value={incomeTotal} icon={ArrowDownLeft} color="#22c55e" trend={8.2} />
-                    <StatCard title="Total Expenses" value={expenseTotal} icon={TrendingUp} color="#f87171" trend={-3.1} />
+                    <StatCard title="Total Income" value={incomeTotal} icon={ArrowDownLeft} color="#10B981" trend={8.2} />
+                    <StatCard title="Total Expenses" value={expenseTotal} icon={TrendingUp} color="#EF4444" trend={-3.1} />
                     <StatCard title="Transactions" value={filtered.length} icon={Hash} prefix="" suffix="" decimals={0} color="#a78bfa" />
                     <StatCard title="Avg Transaction" value={avgTransaction} icon={DollarSign} color="#f59e0b" />
                 </div>
@@ -84,20 +84,20 @@ export default function Transactions() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                     <motion.div variants={bentoItemVariants}>
                         <GlassCard padding="lg" hoverLift={false}>
-                            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">Income vs Expenses</h3>
-                            <IncomeExpenseChart height={220} />
+                            <h3 className="text-body-title text-[var(--foreground)] mb-3">Income vs Expenses</h3>
+                            <div className="cursor-crosshair"><IncomeExpenseChart height={220} /></div>
                         </GlassCard>
                     </motion.div>
 
                     <motion.div variants={bentoItemVariants}>
                         <GlassCard padding="lg" hoverLift={false}>
-                            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">By Account</h3>
-                            <DonutChart
+                            <h3 className="text-body-title text-[var(--foreground)] mb-3">By Account</h3>
+                            <div className="cursor-crosshair"><DonutChart
                                 data={transactionsByAccount}
                                 centerLabel="Total"
                                 centerValue={`${filtered.length}`}
                                 size="md"
-                            />
+                            /></div>
                         </GlassCard>
                     </motion.div>
                 </div>
@@ -105,11 +105,11 @@ export default function Transactions() {
                 {/* Transaction Timeline */}
                 <motion.div variants={bentoItemVariants}>
                     <GlassCard padding="lg" hoverLift={false}>
-                        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Transaction History</h3>
+                        <h3 className="text-subsection-title text-[var(--foreground)] mb-4">Transaction History</h3>
                         <div className="space-y-6">
                             {Object.entries(grouped).map(([date, txns]) => (
                                 <div key={date}>
-                                    <p className="text-xs font-semibold text-[var(--muted)] mb-2 uppercase tracking-wider">{date}</p>
+                                    <p className="text-overline mb-2">{date}</p>
                                     <div className="space-y-0.5">
                                         {txns.map((t, i) => (
                                             <TransactionItem key={i} transaction={t} />

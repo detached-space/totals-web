@@ -49,10 +49,10 @@ export const allPeople: Person[] = [
     ...topPeople,
     { rank: 4, name: "Daniel", amount: "$5,100", initials: "DA", color: "", bg: "bg-blue-400/20 text-blue-400", lastTransaction: "Sent $200", date: "2 days ago" },
     { rank: 5, name: "Hana", amount: "$4,700", initials: "HA", color: "", bg: "bg-pink-400/20 text-pink-400", lastTransaction: "Received $350", date: "3 days ago" },
-    { rank: 6, name: "Yonas", amount: "$4,300", initials: "YO", color: "", bg: "bg-green-400/20 text-green-400", lastTransaction: "Sent $120", date: "4 days ago" },
+    { rank: 6, name: "Yonas", amount: "$4,300", initials: "YO", color: "", bg: "bg-[var(--success)]/20 text-[var(--success)]", lastTransaction: "Sent $120", date: "4 days ago" },
     { rank: 7, name: "Liya", amount: "$3,800", initials: "LI", color: "", bg: "bg-purple-400/20 text-purple-400", lastTransaction: "Received $500", date: "5 days ago" },
     { rank: 8, name: "Kebede", amount: "$3,200", initials: "KE", color: "", bg: "bg-teal-400/20 text-teal-400", lastTransaction: "Sent $80", date: "1 week ago" },
-    { rank: 9, name: "Sara", amount: "$2,900", initials: "SA", color: "", bg: "bg-rose-400/20 text-rose-400", lastTransaction: "Received $150", date: "1 week ago" },
+    { rank: 9, name: "Sara", amount: "$2,900", initials: "SA", color: "", bg: "bg-[var(--danger)]/20 text-[var(--danger)]", lastTransaction: "Received $150", date: "1 week ago" },
     { rank: 10, name: "Abel", amount: "$2,500", initials: "AB", color: "", bg: "bg-amber-400/20 text-amber-400", lastTransaction: "Sent $300", date: "2 weeks ago" },
     { rank: 11, name: "Meron", amount: "$2,100", initials: "ME", color: "", bg: "bg-cyan-400/20 text-cyan-400", lastTransaction: "Sent $45", date: "2 weeks ago" },
     { rank: 12, name: "Tewodros", amount: "$1,800", initials: "TE", color: "", bg: "bg-indigo-400/20 text-indigo-400", lastTransaction: "Received $200", date: "3 weeks ago" },
@@ -61,7 +61,7 @@ export const allPeople: Person[] = [
 
 // ─── Spending Categories ─────────────────────────────────────
 export const spendingCategories: SpendingCategory[] = [
-    { name: "Food & Drinks", value: 480, color: "#f87171" },
+    { name: "Food & Drinks", value: 480, color: "#EF4444" },
     { name: "Rent", value: 1200, color: "#60a5fa" },
     { name: "Travel", value: 320, color: "#fbbf24" },
     { name: "Subscriptions", value: 109, color: "#a78bfa" },
@@ -124,7 +124,7 @@ export const activityFeed: ActivityItem[] = [
 
 // ─── Budgets ─────────────────────────────────────────────────
 export const budgets: Budget[] = [
-    { category: "Food & Drinks", budgeted: 600, spent: 480, color: "#f87171", icon: "UtensilsCrossed" },
+    { category: "Food & Drinks", budgeted: 600, spent: 480, color: "#EF4444", icon: "UtensilsCrossed" },
     { category: "Rent", budgeted: 1200, spent: 1200, color: "#60a5fa", icon: "Home" },
     { category: "Travel", budgeted: 400, spent: 320, color: "#fbbf24", icon: "Plane" },
     { category: "Subscriptions", budgeted: 150, spent: 109, color: "#a78bfa", icon: "CreditCard" },

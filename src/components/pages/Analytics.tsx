@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll } from "framer-motion";
 import GlassCard from "../shared/GlassCard";
 import StatCard from "../cards/StatCard";
 import HealthScore from "../charts/HealthScore";
@@ -18,16 +19,19 @@ const containerVariants = {
 
 const savingsRate = Math.round(((incomeTotal - expenseTotal) / incomeTotal) * 100);
 
-const barColors = ['#a78bfa', '#60a5fa', '#fbbf24', '#f87171', '#34d399'];
+const barColors = ['#a78bfa', '#60a5fa', '#fbbf24', '#EF4444', '#34d399'];
 
 export default function Analytics() {
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({ target: scrollRef, offset: ["start start", "end start"] });
+    void scrollYProgress; // scroll-reactive future use
     const balanceData = accounts.map(a => ({
         name: a.name.split(' ')[0],
         balance: a.balance,
     }));
 
     return (
-        <div className="px-8 pb-8 max-w-[1600px] mx-auto">
+        <div ref={scrollRef} className="px-8 pb-8 max-w-[1600px] mx-auto">
             <motion.div
                 variants={containerVariants}
                 initial="hidden"
@@ -44,19 +48,19 @@ export default function Analytics() {
 
                     <motion.div variants={bentoItemVariants} className="sm:col-span-2">
                         <GlassCard padding="lg" hoverLift={false}>
-                            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">Income vs Expenses</h3>
-                            <IncomeExpenseChart height={230} />
+                            <h3 className="text-body-title text-[var(--foreground)] mb-3">Income vs Expenses</h3>
+                            <div className="cursor-crosshair"><IncomeExpenseChart height={230} /></div>
                         </GlassCard>
                     </motion.div>
 
-                    <StatCard title="Savings Rate" value={savingsRate} prefix="" suffix="%" decimals={0} icon={PiggyBank} color="#22c55e" trend={4.2} />
+                    <StatCard title="Savings Rate" value={savingsRate} prefix="" suffix="%" decimals={0} icon={PiggyBank} color="#10B981" trend={4.2} />
                 </div>
 
                 {/* Row 2: Spending Donut + Account Balances */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                     <motion.div variants={bentoItemVariants}>
                         <GlassCard padding="lg" hoverLift={false}>
-                            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">Spending by Category</h3>
+                            <h3 className="text-body-title text-[var(--foreground)] mb-3">Spending by Category</h3>
                             <div className="flex flex-col sm:flex-row items-center gap-6">
                                 <DonutChart
                                     data={spendingCategories}
@@ -72,7 +76,7 @@ export default function Analytics() {
                                                 <span className="text-sm text-[var(--foreground)]">{cat.name}</span>
                                             </div>
                                             <div className="text-right">
-                                                <span className="text-sm font-semibold text-[var(--foreground)]">${cat.value}</span>
+                                                <span className="text-sm font-semibold text-[var(--foreground)] nums">${cat.value}</span>
                                                 <span className="text-xs text-[var(--muted)] ml-2">
                                                     {Math.round((cat.value / totalSpending) * 100)}%
                                                 </span>
@@ -86,8 +90,8 @@ export default function Analytics() {
 
                     <motion.div variants={bentoItemVariants}>
                         <GlassCard padding="lg" hoverLift={false}>
-                            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">Account Balances</h3>
-                            <div className="h-[250px]">
+                            <h3 className="text-body-title text-[var(--foreground)] mb-3">Account Balances</h3>
+                            <div className="h-[250px] cursor-crosshair">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={balanceData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                                         <XAxis
@@ -127,14 +131,14 @@ export default function Analytics() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                     <motion.div variants={bentoItemVariants}>
                         <GlassCard padding="lg" hoverLift={false}>
-                            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">Cash Flow</h3>
-                            <CashFlowChart height={230} />
+                            <h3 className="text-body-title text-[var(--foreground)] mb-3">Cash Flow</h3>
+                            <div className="cursor-crosshair"><CashFlowChart height={230} /></div>
                         </GlassCard>
                     </motion.div>
 
                     <div className="grid grid-cols-2 gap-5">
-                        <StatCard title="Total Income" value={incomeTotal} icon={TrendingUp} color="#22c55e" />
-                        <StatCard title="Total Expenses" value={expenseTotal} icon={Wallet} color="#f87171" />
+                        <StatCard title="Total Income" value={incomeTotal} icon={TrendingUp} color="#10B981" />
+                        <StatCard title="Total Expenses" value={expenseTotal} icon={Wallet} color="#EF4444" />
                         <StatCard title="Net Cash Flow" value={incomeTotal - expenseTotal} icon={BarChart3} color="#60a5fa" />
                         <StatCard title="Accounts" value={accounts.length} prefix="" decimals={0} icon={Wallet} color="#a78bfa" />
                     </div>

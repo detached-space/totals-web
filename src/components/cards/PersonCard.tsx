@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Send } from "lucide-react";
 import Avatar from "../shared/Avatar";
+import { usePrivacy } from "../shared/PrivacyProvider";
 import type { Person } from "../../lib/types";
 
 interface PersonCardProps {
@@ -8,6 +9,7 @@ interface PersonCardProps {
 }
 
 export default function PersonCard({ person }: PersonCardProps) {
+    const { hidden } = usePrivacy();
     return (
         <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -24,10 +26,10 @@ export default function PersonCard({ person }: PersonCardProps) {
                     ringColor={person.color}
                 />
                 <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-[var(--foreground)] truncate">{person.name}</h4>
-                    <p className="text-sm font-mono text-[var(--muted)]">{person.amount}</p>
+                    <h4 className="text-body-lg text-[var(--foreground)] truncate">{person.name}</h4>
+                    <p className="text-body font-mono text-[var(--muted)]">{hidden ? '••••' : person.amount}</p>
                     {person.lastTransaction && (
-                        <p className="text-xs text-[var(--muted)] mt-1 truncate">
+                        <p className="text-caption mt-1 truncate">
                             {person.lastTransaction} · {person.date}
                         </p>
                     )}

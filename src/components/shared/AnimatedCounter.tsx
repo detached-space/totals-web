@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useSpring, useTransform, motion, useInView } from "framer-motion";
+import { usePrivacy } from "./PrivacyProvider";
 
 interface AnimatedCounterProps {
     value: number;
@@ -20,6 +21,7 @@ export default function AnimatedCounter({
 }: AnimatedCounterProps) {
     const ref = useRef<HTMLSpanElement>(null);
     const isInView = useInView(ref, { once: true });
+    const { hidden } = usePrivacy();
 
     const spring = useSpring(0, {
         duration: duration * 1000,
@@ -27,6 +29,7 @@ export default function AnimatedCounter({
     });
 
     const display = useTransform(spring, (current) => {
+        if (hidden) return `${prefix}••••${suffix}`;
         return `${prefix}${current.toLocaleString('en-US', {
             minimumFractionDigits: decimals,
             maximumFractionDigits: decimals,

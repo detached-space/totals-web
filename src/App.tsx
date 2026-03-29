@@ -11,6 +11,7 @@ import Analytics from "./components/pages/Analytics";
 import ActivityPage from "./components/pages/Activity";
 import BudgetPage from "./components/pages/Budget";
 import ThemeProvider from "./components/theme/ThemeProvider";
+import PrivacyProvider from "./components/shared/PrivacyProvider";
 
 function AppRoutes() {
     const location = useLocation();
@@ -33,8 +34,12 @@ function AppRoutes() {
 export default function App() {
     return (
         <ThemeProvider>
+            <PrivacyProvider>
             <Router>
-                <div className="flex h-screen w-screen overflow-hidden">
+                <div className="noise-overlay flex h-screen w-screen overflow-hidden">
+                    {/* Animated gradient mesh background */}
+                    <div className="mesh-gradient" />
+
                     <Sidebar />
 
                     <div className="flex-1 flex flex-col relative w-full h-full overflow-hidden">
@@ -43,12 +48,9 @@ export default function App() {
                             <AppRoutes />
                         </main>
                     </div>
-
-                    {/* Ambient Background */}
-                    <div className="fixed top-20 left-20 w-[500px] h-[500px] bg-blue-600/8 blur-[150px] -z-10 rounded-full pointer-events-none" />
-                    <div className="fixed bottom-20 right-20 w-[400px] h-[400px] bg-purple-600/6 blur-[150px] -z-10 rounded-full pointer-events-none" />
                 </div>
             </Router>
+            </PrivacyProvider>
         </ThemeProvider>
     );
 }

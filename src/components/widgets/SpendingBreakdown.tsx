@@ -3,6 +3,7 @@ import DonutChart from "../charts/DonutChart";
 import { spendingCategories, totalSpending } from "../../lib/data";
 import { formatCompact } from "../../lib/helpers";
 import { bentoItemVariants } from "../layout/BentoGrid";
+import { usePrivacy } from "../shared/PrivacyProvider";
 
 interface SpendingBreakdownProps {
     compact?: boolean;
@@ -10,20 +11,21 @@ interface SpendingBreakdownProps {
 }
 
 export default function SpendingBreakdown({ compact = false, className = '' }: SpendingBreakdownProps) {
+    const { hidden } = usePrivacy();
     return (
         <motion.div
             variants={bentoItemVariants}
-            className={`glass-panel p-5 ${className}`}
+            className={`glass-panel p-5 group ${className}`}
         >
             <div className="flex items-center justify-between mb-3">
-                <p className="text-sm font-semibold text-[var(--foreground)]">Spending</p>
-                <span className="text-xs text-[var(--muted)]">This month</span>
+                <p className="text-body-title text-[var(--foreground)]">Spending</p>
+                <span className="text-caption">This month</span>
             </div>
 
             <DonutChart
                 data={spendingCategories}
                 centerLabel="Total"
-                centerValue={`$${formatCompact(totalSpending)}`}
+                centerValue={hidden ? '••••' : `$${formatCompact(totalSpending)}`}
                 size={compact ? 'sm' : 'md'}
             />
 
@@ -35,7 +37,7 @@ export default function SpendingBreakdown({ compact = false, className = '' }: S
                                 <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: cat.color }} />
                                 <span className="truncate">{cat.name}</span>
                             </div>
-                            <span className="font-medium text-[var(--foreground)]/80 ml-2">${cat.value}</span>
+                            <span className="font-medium text-[var(--foreground)]/80 ml-2 nums">{hidden ? '••••' : `$${cat.value}`}</span>
                         </div>
                     ))}
                 </div>

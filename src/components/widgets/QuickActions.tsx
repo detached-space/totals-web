@@ -4,7 +4,7 @@ import { bentoItemVariants } from "../layout/BentoGrid";
 
 const actions = [
     { icon: Send, label: "Send", color: "#3b82f6" },
-    { icon: ArrowDownLeft, label: "Request", color: "#22c55e" },
+    { icon: ArrowDownLeft, label: "Request", color: "#10B981" },
     { icon: Receipt, label: "Pay Bills", color: "#f59e0b" },
     { icon: Plus, label: "Top Up", color: "#a78bfa" },
 ];

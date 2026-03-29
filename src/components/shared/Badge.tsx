@@ -7,17 +7,17 @@ interface BadgeProps {
 }
 
 const variantStyles = {
-    success: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
+    success: 'bg-[var(--success)]/15 text-[var(--success)] border-[var(--success)]/20',
     warning: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
-    danger: 'bg-red-500/15 text-red-400 border-red-500/20',
+    danger: 'bg-[var(--danger)]/15 text-[var(--danger)] border-[var(--danger)]/20',
     info: 'bg-blue-500/15 text-blue-400 border-blue-500/20',
     neutral: 'bg-[var(--foreground)]/5 text-[var(--muted)] border-[var(--card-border)]',
 };
 
 const dotColors = {
-    success: 'bg-emerald-400',
+    success: 'bg-[var(--success)]',
     warning: 'bg-amber-400',
-    danger: 'bg-red-400',
+    danger: 'bg-[var(--danger)]',
     info: 'bg-blue-400',
     neutral: 'bg-gray-400',
 };

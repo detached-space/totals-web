@@ -31,11 +31,14 @@ export default function StatCard({
     return (
         <motion.div
             variants={bentoItemVariants}
-            className={`glass-panel p-6 flex flex-col gap-4 ${className}`}
+            whileHover={{ y: -4, transition: { type: 'spring', damping: 20, stiffness: 300 } }}
+            whileTap={{ scale: 0.97, transition: { type: 'spring', damping: 15, stiffness: 400 } }}
+            className={`glass-panel p-6 flex flex-col gap-4 group cursor-pointer ${className}`}
+            style={{ '--stat-color': color } as React.CSSProperties}
         >
             <div className="flex items-center justify-between">
                 <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    className="w-10 h-10 rounded-xl flex items-center justify-center transition-shadow duration-500 group-hover:shadow-[0_0_30px_-5px_var(--stat-color)]"
                     style={{ backgroundColor: `${color}15`, color }}
                 >
                     <Icon size={20} />
@@ -43,7 +46,7 @@ export default function StatCard({
 
                 {trend !== undefined && (
                     <div className={`flex items-center gap-1 text-xs font-medium ${
-                        isPositive ? 'text-emerald-400' : 'text-red-400'
+                        isPositive ? 'text-[var(--success)]' : 'text-[var(--danger)]'
                     }`}>
                         {isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
                         {isPositive ? '+' : ''}{trend}%
@@ -52,13 +55,13 @@ export default function StatCard({
             </div>
 
             <div>
-                <p className="text-xs text-[var(--muted)] mb-1">{title}</p>
+                <p className="text-label-light mb-1.5">{title}</p>
                 <AnimatedCounter
                     value={value}
                     prefix={prefix}
                     suffix={suffix}
                     decimals={decimals}
-                    className="text-2xl font-bold text-[var(--foreground)]"
+                    className="text-section-title nums text-[var(--foreground)]"
                 />
             </div>
         </motion.div>

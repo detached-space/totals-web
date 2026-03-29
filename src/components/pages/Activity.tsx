@@ -55,7 +55,7 @@ export default function ActivityPage() {
                     <motion.div key={date} variants={bentoItemVariants}>
                         {/* Sticky date header */}
                         <div className="sticky top-0 z-10 py-2 mb-3">
-                            <span className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wider bg-[var(--background)]/80 backdrop-blur-sm px-3 py-1 rounded-full">
+                            <span className="text-overline bg-[var(--background)]/80 backdrop-blur-sm px-3 py-1 rounded-full">
                                 {date}
                             </span>
                         </div>
@@ -74,7 +74,7 @@ export default function ActivityPage() {
 
                 {filtered.length === 0 && (
                     <motion.div variants={bentoItemVariants}>
-                        <p className="text-center text-sm text-[var(--muted)] py-16">No activity to show</p>
+                        <p className="text-body text-[var(--muted)] text-center py-16">No activity to show</p>
                     </motion.div>
                 )}
             </motion.div>

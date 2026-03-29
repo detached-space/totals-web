@@ -14,8 +14,8 @@ const data = [
 
 const colors: Record<string, string> = {
     neutral: "#60a5fa",
-    income: "#22c55e",
-    expense: "#f87171",
+    income: "#10B981",
+    expense: "#EF4444",
 };
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -23,8 +23,8 @@ const CustomTooltip = ({ active, payload }: any) => {
         const val = payload[0].value;
         return (
             <div className="glass-panel-sm p-2 shadow-lg">
-                <p className="text-xs text-[var(--muted)]">{payload[0].payload.name}</p>
-                <p className="text-sm font-bold text-[var(--foreground)]">
+                <p className="text-label-light">{payload[0].payload.name}</p>
+                <p className="text-body-title nums text-[var(--foreground)]">
                     {val >= 0 ? '+' : ''}${Math.abs(val).toLocaleString()}
                 </p>
             </div>
@@ -44,7 +44,7 @@ export default function CashFlowChart({ height = 250 }: CashFlowChartProps) {
     }));
 
     return (
-        <div style={{ height }} className="w-full">
+        <div style={{ height }} className="w-full cursor-crosshair">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={displayData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                     <CartesianGrid vertical={false} stroke="var(--card-border)" strokeDasharray="4 4" />
@@ -55,7 +55,7 @@ export default function CashFlowChart({ height = 250 }: CashFlowChartProps) {
                         tick={{ fill: 'var(--muted)', fontSize: 10 }}
                     />
                     <Tooltip content={<CustomTooltip />} cursor={{ fill: 'var(--card-border)', opacity: 0.3 }} />
-                    <Bar dataKey="displayValue" radius={[4, 4, 0, 0]} isAnimationActive animationDuration={800}>
+                    <Bar dataKey="displayValue" radius={[4, 4, 0, 0]} isAnimationActive animationDuration={1200}>
                         {displayData.map((entry, index) => (
                             <Cell key={index} fill={colors[entry.type]} />
                         ))}

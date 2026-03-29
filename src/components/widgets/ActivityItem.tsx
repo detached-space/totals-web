@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, ArrowDownLeft, RefreshCw, Trophy } from "lucide-react";
 import type { ActivityItem as ActivityItemType } from "../../lib/types";
 import { getRelativeTime } from "../../lib/helpers";
+import { usePrivacy } from "../shared/PrivacyProvider";
 
 interface ActivityItemProps {
     activity: ActivityItemType;
@@ -15,6 +16,7 @@ const typeConfig = {
 };
 
 export default function ActivityItemComponent({ activity, isLast = false }: ActivityItemProps) {
+    const { hidden } = usePrivacy();
     const config = typeConfig[activity.type];
     const Icon = activity.type === 'transaction' && activity.amount && activity.amount > 0
         ? ArrowDownLeft
@@ -39,16 +41,16 @@ export default function ActivityItemComponent({ activity, isLast = false }: Acti
             <div className="pb-6 flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-4">
                     <div>
-                        <p className="text-sm font-medium text-[var(--foreground)]">{activity.title}</p>
-                        <p className="text-xs text-[var(--muted)] mt-0.5">{activity.description}</p>
+                        <p className="text-body-title text-[var(--foreground)]">{activity.title}</p>
+                        <p className="text-caption mt-0.5">{activity.description}</p>
                     </div>
                     <div className="text-right shrink-0">
                         {activity.amount && (
-                            <p className={`text-sm font-semibold ${activity.amount > 0 ? 'text-emerald-400' : 'text-[var(--foreground)]'}`}>
-                                {activity.amount > 0 ? '+' : '-'}${Math.abs(activity.amount).toLocaleString()}
+                            <p className={`text-sm font-semibold nums ${activity.amount > 0 ? 'text-[var(--success)]' : 'text-[var(--foreground)]'}`}>
+                                {hidden ? '••••' : `${activity.amount > 0 ? '+' : '-'}$${Math.abs(activity.amount).toLocaleString()}`}
                             </p>
                         )}
-                        <p className="text-[11px] text-[var(--muted)]">{getRelativeTime(activity.timestamp)}</p>
+                        <p className="text-caption">{getRelativeTime(activity.timestamp)}</p>
                     </div>
                 </div>
             </div>
