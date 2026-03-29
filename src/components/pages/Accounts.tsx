@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import AccountCard from "../cards/AccountCard";
 import GlassCard from "../shared/GlassCard";
@@ -6,18 +6,18 @@ import TransactionItem from "../widgets/TransactionItem";
 import NetWorthChart from "../charts/NetWorthChart";
 import DonutChart from "../charts/DonutChart";
 import AnimatedCounter from "../shared/AnimatedCounter";
-import { accounts, transactions, spendingCategories, totalBalance } from "../../lib/data";
 import { bentoItemVariants } from "../layout/BentoGrid";
-import { getLogo, getBankName, formatCompact } from "../../lib/helpers";
+import { getLogo, formatCompact } from "../../lib/helpers";
 import { usePrivacy } from "../shared/PrivacyProvider";
 import { ArrowRight, Landmark, ShieldCheck } from "lucide-react";
+import { api, categoryColorMap, type ApiTransaction, type ApiCategory, type ApiAccount } from "../../lib/api";
+import type { Transaction, Account, SpendingCategory, NetWorthDataPoint } from "../../lib/types";
 
 const containerVariants = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.08 } },
 };
 
-// Cards slam in from below with rubber-band overshoot
 const slamVariants = {
     hidden: { opacity: 0, y: 60, scale: 0.9 },
     visible: (i: number) => ({
@@ -33,7 +33,6 @@ const slamVariants = {
     }),
 };
 
-// Transactions slide in from the right
 const txVariants = {
     hidden: { opacity: 0, x: 30 },
     visible: (i: number) => ({
@@ -64,7 +63,6 @@ const barItemVariants = {
     }),
 };
 
-// Letter animation for hero text
 const letterVariants = {
     hidden: { y: 30, opacity: 0 },
     visible: (i: number) => ({
@@ -79,18 +77,139 @@ const letterVariants = {
     }),
 };
 
+function mapTransaction(t: ApiTransaction): Transaction {
+    return {
+        amount: t.type === 'DEBIT' ? -Math.abs(t.amount) : Math.abs(t.amount),
+        reference: t.reference,
+        creditor: t.creditor ?? undefined,
+        time: t.time ?? undefined,
+        status: t.status ?? undefined,
+        currentBalance: t.currentBalance ?? undefined,
+        bankId: t.bankId ?? undefined,
+        type: t.type,
+        transactionLink: t.transactionLink ?? undefined,
+        accountNumber: t.accountNumber ?? undefined,
+    };
+}
+
+function computeAccountNetWorth(
+    txns: ApiTransaction[],
+    currentBalance: number
+): NetWorthDataPoint[] {
+    const monthMap: Record<string, { credits: number; debits: number; order: number }> = {};
+
+    for (const t of txns) {
+        if (!t.time) continue;
+        const d = new Date(t.time);
+        const key = d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+        const order = d.getFullYear() * 12 + d.getMonth();
+        if (!monthMap[key]) monthMap[key] = { credits: 0, debits: 0, order };
+        if (t.type === 'CREDIT') monthMap[key].credits += t.amount;
+        else monthMap[key].debits += t.amount;
+    }
+
+    const sorted = Object.entries(monthMap).sort((a, b) => a[1].order - b[1].order);
+    const result: NetWorthDataPoint[] = [];
+    let running = currentBalance;
+
+    for (let i = sorted.length - 1; i >= 0; i--) {
+        const [month, { credits, debits }] = sorted[i];
+        result.unshift({ month, value: Math.round(running) });
+        running = running - credits + debits;
+    }
+
+    return result.slice(-7);
+}
+
+function computeSpending(
+    txns: ApiTransaction[],
+    categories: ApiCategory[]
+): SpendingCategory[] {
+    const catMap = new Map(categories.map(c => [c.id, c]));
+    const spending: Record<number, number> = {};
+
+    for (const t of txns) {
+        if (t.type !== 'DEBIT' || !t.categoryId) continue;
+        spending[t.categoryId] = (spending[t.categoryId] ?? 0) + t.amount;
+    }
+
+    return Object.entries(spending)
+        .map(([idStr, value]) => {
+            const cat = catMap.get(Number(idStr));
+            return {
+                name: cat?.name ?? 'Other',
+                value: Math.round(value),
+                color: categoryColorMap[cat?.colorKey ?? ''] ?? '#a78bfa',
+            };
+        })
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 6);
+}
+
 export default function Accounts() {
     const { hidden } = usePrivacy();
     const scrollRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({ target: scrollRef, offset: ["start start", "end start"] });
     const carouselY = useTransform(scrollYProgress, [0, 1], [0, -40]);
-    const [selectedId, setSelectedId] = useState(accounts[0].id);
-    const selected = accounts.find(a => a.id === selectedId) || accounts[0];
-    const accountTransactions = transactions.filter(t => t.bankId === selectedId).slice(0, 6);
+
+    const [accounts, setAccounts] = useState<Account[]>([]);
+    const [totalBalance, setTotalBalance] = useState(0);
+    const [allTxns, setAllTxns] = useState<ApiTransaction[]>([]);
+    const [categories, setCategories] = useState<ApiCategory[]>([]);
+    const [apiAccounts, setApiAccounts] = useState<ApiAccount[]>([]);
+    const [selectedId, setSelectedId] = useState<number>(0);
+
+    useEffect(() => {
+        Promise.all([
+            api.summary(),
+            api.accounts(),
+            api.transactions({ limit: '500' }),
+            api.categories(),
+        ]).then(([summary, accs, txns, cats]) => {
+            setTotalBalance(summary.totalBalance);
+            setApiAccounts(accs);
+            setCategories(cats);
+            setAllTxns(txns.data);
+
+            const mapped: Account[] = accs.map(a => ({
+                id: a.bank,
+                name: a.bankName,
+                balance: a.balance,
+                accountNumber: a.accountNumber,
+            }));
+            setAccounts(mapped);
+            if (mapped.length > 0) setSelectedId(mapped[0].id);
+        }).catch(console.error);
+    }, []);
+
+    const selected = accounts.find(a => a.id === selectedId) ?? accounts[0];
+    const selectedApiAccount = apiAccounts.find(a => a.bank === selectedId);
+
+    const accountTxns = useMemo(
+        () => allTxns.filter(t => t.bankId === selectedId),
+        [allTxns, selectedId]
+    );
+
+    const accountTransactions = useMemo(
+        () => accountTxns.slice(0, 6).map(mapTransaction),
+        [accountTxns]
+    );
+
+    const netWorthData = useMemo(
+        () => selected ? computeAccountNetWorth(accountTxns, selected.balance) : [],
+        [accountTxns, selected]
+    );
+
+    const spendingCategories = useMemo(
+        () => computeSpending(accountTxns, categories),
+        [accountTxns, categories]
+    );
+
+    const spendingTotal = spendingCategories.reduce((s, c) => s + c.value, 0);
     const sortedAccounts = [...accounts].sort((a, b) => b.balance - a.balance);
     const maxBalance = sortedAccounts[0]?.balance || 1;
     const label = "YOUR ACCOUNTS";
-    const selectedColor = popColors[(selected.id) % popColors.length];
+    const selectedColor = selected ? popColors[selected.id % popColors.length] : popColors[0];
 
     return (
         <div ref={scrollRef} className="px-8 pb-8 max-w-[1600px] mx-auto">
@@ -173,7 +292,7 @@ export default function Accounts() {
                     </div>
                 </motion.div>
 
-                {/* Card Carousel with slam-in */}
+                {/* Card Carousel */}
                 <motion.div variants={bentoItemVariants}>
                     <motion.div style={{ y: carouselY }}>
                         <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory -mx-2 px-2">
@@ -201,108 +320,126 @@ export default function Accounts() {
                 </motion.div>
 
                 {/* Selected Account Detail */}
-                <motion.div
+                {selected && <motion.div
                     key={selectedId}
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] }}
                     className="grid grid-cols-1 lg:grid-cols-3 gap-5"
                 >
-                        {/* Balance Trend */}
-                        <div className="lg:col-span-2">
-                            <GlassCard padding="lg" hoverLift={false} className="h-full">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <motion.div
-                                        initial={{ scale: 0, rotate: -45 }}
-                                        animate={{ scale: 1, rotate: 0 }}
-                                        transition={{ type: 'spring' as const, damping: 10, stiffness: 250 }}
-                                        className="w-10 h-10 rounded-lg border-[var(--border-width)] border-[var(--card-border)] flex items-center justify-center shadow-[3px_3px_0px_var(--card-border)]"
-                                        style={{ backgroundColor: selectedColor }}
-                                    >
-                                        <img src={getLogo(selected.id)} alt="" className="w-5 h-5" />
-                                    </motion.div>
-                                    <div>
-                                        <h3 className="text-subsection-title text-[var(--foreground)]">{selected.name}</h3>
-                                        <span className="text-[10px] font-black text-[var(--muted)] uppercase tracking-wider">Balance Trend</span>
-                                    </div>
-                                    <motion.span
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.3 }}
-                                        className="brutal-tag ml-auto"
-                                        style={{ backgroundColor: selectedColor, color: '#1A1A2E' }}
-                                    >
-                                        Active
-                                    </motion.span>
-                                </div>
-                                <div className="cursor-crosshair" style={{ height: 260 }}>
-                                    <NetWorthChart height={260} showHeader={false} />
-                                </div>
-                            </GlassCard>
-                        </div>
-
-                        {/* Account Info — staggered reveal */}
-                        <div>
-                            <GlassCard padding="lg" hoverLift={false} className="h-full flex flex-col justify-between">
+                    {/* Balance Trend */}
+                    <div className="lg:col-span-2">
+                        <GlassCard padding="lg" hoverLift={false} className="h-full">
+                            <div className="flex items-center gap-3 mb-4">
+                                <motion.div
+                                    initial={{ scale: 0, rotate: -45 }}
+                                    animate={{ scale: 1, rotate: 0 }}
+                                    transition={{ type: 'spring' as const, damping: 10, stiffness: 250 }}
+                                    className="w-10 h-10 rounded-lg border-[var(--border-width)] border-[var(--card-border)] flex items-center justify-center shadow-[3px_3px_0px_var(--card-border)]"
+                                    style={{ backgroundColor: selectedColor }}
+                                >
+                                    <img src={getLogo(selected.id)} alt="" className="w-5 h-5" />
+                                </motion.div>
                                 <div>
-                                    <div className="flex items-center justify-between mb-4">
-                                        <p className="text-overline">Account Details</p>
-                                        <motion.div
-                                            initial={{ scale: 0 }}
-                                            animate={{ scale: 1 }}
-                                            transition={{ delay: 0.2, type: 'spring' as const, damping: 10, stiffness: 200 }}
-                                        >
-                                            <ArrowRight size={14} className="text-[var(--muted)]" />
-                                        </motion.div>
-                                    </div>
-                                    <div className="space-y-4">
-                                        {[
-                                            { label: "Bank", value: selected.name },
-                                            { label: "Account Number", value: selected.accountNumber, mono: true },
-                                        ].map((item, i) => (
-                                            <motion.div
-                                                key={item.label}
-                                                initial={{ opacity: 0, x: -15 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                transition={{ delay: 0.1 + i * 0.1, type: 'spring' as const, damping: 20, stiffness: 300 }}
-                                            >
-                                                <p className="text-label-light">{item.label}</p>
-                                                <p className={`text-sm font-bold text-[var(--foreground)] ${item.mono ? 'font-mono' : ''}`}>{item.value}</p>
-                                            </motion.div>
-                                        ))}
+                                    <h3 className="text-subsection-title text-[var(--foreground)]">{selected.name}</h3>
+                                    <span className="text-[10px] font-black text-[var(--muted)] uppercase tracking-wider">Balance Trend</span>
+                                </div>
+                                <motion.span
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.3 }}
+                                    className="brutal-tag ml-auto"
+                                    style={{ backgroundColor: selectedColor, color: '#1A1A2E' }}
+                                >
+                                    Active
+                                </motion.span>
+                            </div>
+                            <div className="cursor-crosshair" style={{ height: 260 }}>
+                                <NetWorthChart data={netWorthData} height={260} showHeader={false} />
+                            </div>
+                        </GlassCard>
+                    </div>
 
+                    {/* Account Info */}
+                    <div>
+                        <GlassCard padding="lg" hoverLift={false} className="h-full flex flex-col justify-between">
+                            <div>
+                                <div className="flex items-center justify-between mb-4">
+                                    <p className="text-overline">Account Details</p>
+                                    <motion.div
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        transition={{ delay: 0.2, type: 'spring' as const, damping: 10, stiffness: 200 }}
+                                    >
+                                        <ArrowRight size={14} className="text-[var(--muted)]" />
+                                    </motion.div>
+                                </div>
+                                <div className="space-y-4">
+                                    {[
+                                        { label: "Bank", value: selected.name },
+                                        { label: "Account Number", value: selected.accountNumber, mono: true },
+                                        ...(selectedApiAccount?.accountHolderName ? [{ label: "Holder", value: selectedApiAccount.accountHolderName }] : []),
+                                    ].map((item, i) => (
+                                        <motion.div
+                                            key={item.label}
+                                            initial={{ opacity: 0, x: -15 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.1 + i * 0.1, type: 'spring' as const, damping: 20, stiffness: 300 }}
+                                        >
+                                            <p className="text-label-light">{item.label}</p>
+                                            <p className={`text-sm font-bold text-[var(--foreground)] ${item.mono ? 'font-mono' : ''}`}>{item.value}</p>
+                                        </motion.div>
+                                    ))}
+
+                                    <motion.div
+                                        initial={{ opacity: 0, x: -15 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: 0.3, type: 'spring' as const, damping: 20, stiffness: 300 }}
+                                    >
+                                        <p className="text-label-light">Balance</p>
+                                        <AnimatedCounter
+                                            value={selected.balance}
+                                            prefix="$"
+                                            decimals={2}
+                                            className="text-display-sm nums text-[var(--foreground)]"
+                                        />
+                                    </motion.div>
+
+                                    {selectedApiAccount?.settledBalance != null && (
                                         <motion.div
                                             initial={{ opacity: 0, x: -15 }}
                                             animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: 0.3, type: 'spring' as const, damping: 20, stiffness: 300 }}
+                                            transition={{ delay: 0.35, type: 'spring' as const, damping: 20, stiffness: 300 }}
                                         >
-                                            <p className="text-label-light">Balance</p>
+                                            <p className="text-label-light">Settled Balance</p>
                                             <AnimatedCounter
-                                                value={selected.balance}
+                                                value={selectedApiAccount.settledBalance}
                                                 prefix="$"
                                                 decimals={2}
-                                                className="text-display-sm nums text-[var(--foreground)]"
+                                                className="text-sm font-bold nums text-[var(--foreground)]"
                                             />
                                         </motion.div>
+                                    )}
 
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.8 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            transition={{ delay: 0.4, type: 'spring' as const, damping: 12, stiffness: 200 }}
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.8 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ delay: 0.4, type: 'spring' as const, damping: 12, stiffness: 200 }}
+                                    >
+                                        <p className="text-label-light">Status</p>
+                                        <span
+                                            className="brutal-tag mt-1 inline-flex shadow-[2px_2px_0px_var(--card-border)]"
+                                            style={{ backgroundColor: selectedColor, color: '#1A1A2E' }}
                                         >
-                                            <p className="text-label-light">Status</p>
-                                            <span
-                                                className="brutal-tag mt-1 inline-flex shadow-[2px_2px_0px_var(--card-border)]"
-                                                style={{ backgroundColor: selectedColor, color: '#1A1A2E' }}
-                                            >
-                                                Active
-                                            </span>
-                                        </motion.div>
-                                    </div>
+                                            Active
+                                        </span>
+                                    </motion.div>
                                 </div>
-                            </GlassCard>
-                        </div>
-                    </motion.div>
+                            </div>
+                        </GlassCard>
+                    </div>
+                </motion.div>}
+
                 {/* Transactions + Spending */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                     <motion.div variants={bentoItemVariants} className="lg:col-span-2">
@@ -351,7 +488,7 @@ export default function Accounts() {
                             <DonutChart
                                 data={spendingCategories}
                                 centerLabel="Total"
-                                centerValue={`$${spendingCategories.reduce((s, c) => s + c.value, 0).toLocaleString()}`}
+                                centerValue={`$${spendingTotal.toLocaleString()}`}
                                 size="sm"
                             />
                         </GlassCard>
@@ -395,7 +532,7 @@ export default function Accounts() {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between mb-1">
                                                 <span className={`text-xs font-bold truncate transition-colors ${isSelected ? 'text-[var(--accent)]' : 'text-[var(--foreground)] group-hover:text-[var(--accent)]'}`}>
-                                                    {getBankName(acc.id)}
+                                                    {acc.name}
                                                 </span>
                                                 <div className="flex items-center gap-2 shrink-0 ml-2">
                                                     <span className="text-xs font-black text-[var(--foreground)] nums">

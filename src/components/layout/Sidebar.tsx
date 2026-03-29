@@ -1,5 +1,5 @@
 import {
-    Home, Wallet, CreditCard, Users, ChevronLeft, ChevronRight,
+    Home, Wallet, CreditCard, ChevronLeft, ChevronRight,
     BarChart3, Activity, PiggyBank, Sun, Moon
 } from "lucide-react";
 import { useState } from "react";
@@ -15,12 +15,6 @@ const navGroups = [
             { icon: Home, label: "Dashboard", path: "/" },
             { icon: Wallet, label: "Accounts", path: "/accounts" },
             { icon: CreditCard, label: "Transactions", path: "/transactions" },
-        ],
-    },
-    {
-        label: "Social",
-        items: [
-            { icon: Users, label: "People", path: "/people" },
         ],
     },
     {
@@ -56,7 +50,7 @@ export default function Sidebar() {
             <div className="relative z-10 flex flex-col h-full">
                 {/* Profile Section */}
                 <div className="p-4 flex items-center gap-3 border-b-[var(--border-width)] border-b-[var(--card-border)]">
-                    <Avatar initials="BS" size="md" bg="bg-[var(--accent)] text-white font-black" />
+                    <Avatar initials="BS" size="md" bg="bg-[#4F46E5] text-white font-black" />
                     <AnimatePresence>
                         {!collapsed && (
                             <motion.div
@@ -105,7 +99,7 @@ export default function Sidebar() {
                                         {active && (
                                             <motion.div
                                                 layoutId="sidebar-active"
-                                                className="absolute inset-0 rounded-lg bg-[var(--accent)] border-[var(--border-width)] border-[var(--card-border)] shadow-[3px_3px_0px_var(--card-border)]"
+                                                className="absolute inset-0 rounded-lg bg-[#4F46E5] border-[var(--border-width)] border-[var(--card-border)] shadow-[3px_3px_0px_var(--card-border)]"
                                                 transition={{ type: 'spring' as const, duration: 0.4, bounce: 0.15 }}
                                             />
                                         )}

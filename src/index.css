@@ -31,12 +31,12 @@
 
 /* ─── Dark Mode (Default) ─────────────────────────────────── */
 :root {
-  --background: #1A1A2E;
+  --background: #0A0A0A;
   --foreground: #EAEAEA;
 
   /* Surface / card system */
-  --card: #16213E;
-  --card-border: #0F3460;
+  --card: #141414;
+  --card-border: #2A2A2A;
   --card-border-highlight: #533483;
 
   /* Neo-brutal palette — bold, saturated, playful */
@@ -49,24 +49,24 @@
   --warning: #FEE440;
 
   /* Text hierarchy */
-  --muted: #8892B0;
+  --muted: #888888;
   --muted-strong: #6B7394;
 
   /* Tones */
-  --slate-700: #2D3561;
-  --slate-600: #3D4A7A;
-  --slate-500: #6B7394;
-  --slate-400: #8892B0;
-  --muted-fill: #1A1F3D;
+  --slate-700: #2A2A2A;
+  --slate-600: #3A3A3A;
+  --slate-500: #6B6B6B;
+  --slate-400: #8A8A8A;
+  --muted-fill: #1A1A1A;
 
   /* Neo-brutal hard shadows — no blur, solid offset */
-  --shadow-brutal: 4px 4px 0px #0F3460;
-  --shadow-brutal-lg: 6px 6px 0px #0F3460;
-  --shadow-brutal-xl: 8px 8px 0px #0F3460;
+  --shadow-brutal: 4px 4px 0px #2A2A2A;
+  --shadow-brutal-lg: 6px 6px 0px #2A2A2A;
+  --shadow-brutal-xl: 8px 8px 0px #2A2A2A;
   --shadow-brutal-accent: 4px 4px 0px var(--accent);
-  --shadow-glass: 4px 4px 0px #0F3460;
+  --shadow-glass: 4px 4px 0px #2A2A2A;
   --shadow-glow: 4px 4px 0px var(--accent);
-  --shadow-elevated: 6px 6px 0px #0F3460;
+  --shadow-elevated: 6px 6px 0px #2A2A2A;
 
   /* Pop colors for tags/badges */
   --pop-yellow: #FEE440;
